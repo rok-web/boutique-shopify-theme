@@ -1,0 +1,114 @@
+{% comment %}
+  Renders a product card
+  Accepts:
+  - product: {Object} Product Liquid object
+  - show_vendor: {Boolean} Show vendor name. Default: false
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign compare_at = current_variant.compare_at_price %}
+{% assign price = current_variant.price %}
+
+{% if compare_at > price %}
+  {% assign discount_pct = compare_at | minus: price | times: 100 | divided_by: compare_at %}
+{% endif %}
+
+<div class="product-card" data-product-id="{{ product.id }}">
+
+  <!-- Badges -->
+  <div class="product-card__badges">
+    {% if product.available == false %}
+      <span class="badge badge--sold-out">Sold Out</span>
+    {% elsif discount_pct > 0 %}
+      <span class="badge badge--sale">{{ discount_pct }}% OFF</span>
+    {% elsif product.created_at > 'now' | date: '%s' | minus: 604800 | date: '%Y-%m-%dT%H:%M:%SZ' %}
+      <span class="badge badge--new">New</span>
+    {% endif %}
+
+    {% if product.metafields.custom.limited_stock %}
+      <span class="badge badge--low-stock">Only {{ product.variants.first.inventory_quantity }} left!</span>
+    {% endif %}
+  </div>
+
+  <!-- Wishlist Button -->
+  <button class="wishlist-btn" onclick="toggleWishlist(this, '{{ product.id }}')" aria-label="Add to wishlist">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+  </button>
+
+  <!-- Product Image -->
+  <a href="{{ product.url }}" class="product-card__media">
+    {% if product.featured_image %}
+      <img
+        class="product-card__img product-card__img--primary"
+        src="{{ product.featured_image | image_url: width: 500 }}"
+        alt="{{ product.featured_image.alt | default: product.title }}"
+        loading="lazy"
+        width="500"
+        height="600">
+
+      {% if product.images[1] %}
+        <img
+          class="product-card__img product-card__img--secondary"
+          src="{{ product.images[1] | image_url: width: 500 }}"
+          alt="{{ product.title }} - alternate view"
+          loading="lazy"
+          width="500"
+          height="600">
+      {% endif %}
+    {% else %}
+      <div class="product-card__no-image">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+    {% endif %}
+
+    {% unless product.available %}
+      <div class="product-card__sold-overlay">Sold Out</div>
+    {% endunless %}
+  </a>
+
+  <!-- Quick Add -->
+  {% if product.available %}
+    {% if product.variants.size == 1 and product.variants.first.title == 'Default Title' %}
+      <button
+        class="product-card__quick-add"
+        onclick="quickAddToCart('{{ product.variants.first.id }}', this)"
+        aria-label="Add to cart">
+        Add to Bag
+      </button>
+    {% else %}
+      <a href="{{ product.url }}" class="product-card__quick-add">
+        Select Options
+      </a>
+    {% endif %}
+  {% endif %}
+
+  <!-- Product Info -->
+  <div class="product-card__info">
+    {% if show_vendor %}
+      <p class="product-card__vendor">{{ product.vendor }}</p>
+    {% endif %}
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    {% render 'price', product: product %}
+
+    <!-- Color Swatches (if color variant exists) -->
+    {% assign color_option = product.options_by_name['Color'] %}
+    {% if color_option %}
+      <div class="product-card__swatches">
+        {% for value in color_option.values limit: 5 %}
+          <span
+            class="swatch"
+            title="{{ value }}"
+            style="background: {{ value | downcase | replace: ' ', '' }}">
+          </span>
+        {% endfor %}
+        {% if color_option.values.size > 5 %}
+          <span class="swatch-more">+{{ color_option.values.size | minus: 5 }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>

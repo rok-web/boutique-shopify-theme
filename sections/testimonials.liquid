@@ -1,0 +1,138 @@
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "What Our Customers Say"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text",
+          "default": "Absolutely gorgeous saree! The quality is exceptional and it arrived well-packed. Will definitely shop again."
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer name",
+          "default": "Priya Sharma"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_location",
+          "label": "Reviewer location",
+          "default": "Mumbai"
+        },
+        {
+          "type": "image_picker",
+          "id": "reviewer_photo",
+          "label": "Reviewer photo (optional)"
+        },
+        {
+          "type": "select",
+          "id": "rating",
+          "label": "Rating",
+          "options": [
+            {"value": "5", "label": "⭐⭐⭐⭐⭐ 5 stars"},
+            {"value": "4", "label": "⭐⭐⭐⭐ 4 stars"},
+            {"value": "3", "label": "⭐⭐⭐ 3 stars"}
+          ],
+          "default": "5"
+        },
+        {
+          "type": "text",
+          "id": "product_bought",
+          "label": "Product bought",
+          "default": "Kanjivaram Silk Saree"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {"type": "review"},
+        {"type": "review"},
+        {"type": "review"},
+        {"type": "review"}
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="testimonials-section">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+        <div class="aggregate-rating" style="text-align: center; margin-bottom: 15px; color: var(--clr-ink-muted);">
+          <span style="color: #FFB800; font-size: 1.2rem;">⭐⭐⭐⭐⭐</span>
+          <strong style="color: var(--clr-ink);">4.8</strong> from 1,240 verified reviews
+        </div>
+        <div class="section-divider"><span></span></div>
+      </div>
+    {% endif %}
+
+    <div class="testimonials-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'review' %}
+          <div class="testimonial-card" {{ block.shopify_attributes }}>
+            <!-- Stars -->
+            <div class="testimonial-stars">
+              {% assign rating = block.settings.rating | times: 1 %}
+              {% for i in (1..5) %}
+                {% if i <= rating %}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% else %}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <!-- Review text -->
+            <blockquote class="testimonial-text">
+              "{{ block.settings.review_text }}"
+            </blockquote>
+
+            <!-- Product tag -->
+            {% if block.settings.product_bought != blank %}
+              <span class="testimonial-product">Purchased: {{ block.settings.product_bought }}</span>
+            {% endif %}
+
+            <!-- Reviewer info -->
+            <div class="testimonial-author">
+              {% if block.settings.reviewer_photo %}
+                <img
+                  src="{{ block.settings.reviewer_photo | image_url: width: 60 }}"
+                  alt="{{ block.settings.reviewer_name }}"
+                  class="testimonial-avatar"
+                  loading="lazy">
+              {% else %}
+                <div class="testimonial-avatar testimonial-avatar--initial">
+                  {{ block.settings.reviewer_name | slice: 0 }}
+                </div>
+              {% endif %}
+              <div>
+                <strong class="testimonial-name">{{ block.settings.reviewer_name }}</strong>
+                {% if block.settings.reviewer_location %}
+                  <span class="testimonial-location">{{ block.settings.reviewer_location }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

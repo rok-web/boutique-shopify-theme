@@ -1,0 +1,22 @@
+{% comment %}
+  Renders product price
+  Accepts:
+  - product: {Object} Product object
+  - variant: {Object} Optional specific variant (defaults to selected or first)
+{% endcomment %}
+
+{% assign target_variant = variant | default: product.selected_or_first_available_variant %}
+
+<div class="price-wrapper">
+  {% if target_variant.compare_at_price > target_variant.price %}
+    <span class="price price--sale">{{ target_variant.price | money }}</span>
+    <s class="price price--compare">{{ target_variant.compare_at_price | money }}</s>
+    <span class="price-save">
+      Save {{ target_variant.compare_at_price | minus: target_variant.price | money }}
+    </span>
+  {% elsif product.price_varies %}
+    <span class="price">From {{ product.price_min | money }}</span>
+  {% else %}
+    <span class="price">{{ target_variant.price | money }}</span>
+  {% endif %}
+</div>

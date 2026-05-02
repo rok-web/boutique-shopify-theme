@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5ede3">
+  <title>
+    {{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}
+    {% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}
+    {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {% if settings.favicon != blank %}
+    <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+  {% endif %}
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  <link rel="stylesheet" href="{{ 'style.css' | asset_url }}">
+</head>
+
+<body class="template-{{ template.name }}{% if customer %} customer-logged-in{% endif %}">
+
+  <a href="#MainContent" class="skip-to-content">Skip to content</a>
+
+  <a class="skip-to-content-link button visually-hidden" href="#MainContent">
+    Skip to content
+  </a>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar" id="AnnouncementBar">
+    <p>✨ Free shipping on orders above ₹999 &nbsp;|&nbsp; 🌸 New arrivals every Friday &nbsp;|&nbsp; 💛 Handwoven. Handpicked. Heartfelt.</p>
+  </div>
+
+  {% section 'header' %}
+
+  <main id="MainContent" class="main-content" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+
+  <!-- Cart Drawer -->
+  <div class="cart-drawer" id="CartDrawer" aria-hidden="true">
+    <div class="cart-drawer__overlay" onclick="closeCart()"></div>
+    <div class="cart-drawer__inner">
+      <div class="cart-drawer__header">
+        <h3>Your Cart</h3>
+        <button class="cart-drawer__close" onclick="closeCart()" aria-label="Close cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="cart-drawer__body" id="CartDrawerBody">
+        {% if cart.item_count == 0 %}
+          <div class="cart-empty">
+            <div class="cart-empty__icon">🛍️</div>
+            <p>Your cart is empty</p>
+            <a href="/collections/all" class="btn btn--primary" onclick="closeCart()">Start Shopping</a>
+          </div>
+        {% else %}
+          {% for item in cart.items %}
+            <div class="cart-item" data-key="{{ item.key }}">
+              <div class="cart-item__image">
+                <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title }}" loading="lazy">
+              </div>
+              <div class="cart-item__details">
+                <h4>{{ item.product.title }}</h4>
+                {% unless item.variant.title == 'Default Title' %}
+                  <p class="cart-item__variant">{{ item.variant.title }}</p>
+                {% endunless %}
+                <div class="cart-item__price-qty">
+                  <span class="cart-item__price">{{ item.final_price | money }}</span>
+                  <div class="cart-item__qty">
+                    <button onclick="updateCart('{{ item.key }}', {{ item.quantity | minus: 1 }})">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button onclick="updateCart('{{ item.key }}', {{ item.quantity | plus: 1 }})">+</button>
+                  </div>
+                </div>
+              </div>
+              <button class="cart-item__remove" onclick="updateCart('{{ item.key }}', 0)" aria-label="Remove">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% if cart.item_count > 0 %}
+        <div class="cart-drawer__footer">
+          <div class="cart-total">
+            <span>Total</span>
+            <span class="cart-total__price">{{ cart.total_price | money }}</span>
+          </div>
+          <a href="/checkout" class="btn btn--primary btn--full">Proceed to Checkout</a>
+          <a href="/cart" class="btn btn--secondary btn--full">View Full Cart</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <a href="/" class="mobile-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="/collections/all" class="mobile-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Shop</span>
+    </a>
+    <a href="/pages/search" class="mobile-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Search</span>
+    </a>
+    <a href="/cart" class="mobile-nav-item cart-trigger" onclick="event.preventDefault(); openCart()">
+      <div class="cart-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        {% if cart.item_count > 0 %}
+          <span class="cart-badge">{{ cart.item_count }}</span>
+        {% endif %}
+      </div>
+      <span>Cart</span>
+    </a>
+    <a href="/account" class="mobile-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Account</span>
+    </a>
+  </nav>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/919876543210?text=Hello!%20I%20need%20help%20with%20a%20saree%20order." class="floating-wa" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+  <style>
+    .floating-wa {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      background-color: #25D366;
+      color: white;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+    .floating-wa:hover {
+      transform: scale(1.1);
+    }
+    @media (max-width: 768px) {
+      .floating-wa {
+        bottom: 80px; /* Above the mobile nav bar */
+      }
+    }
+  </style>
+
+  <!-- Cookie Consent -->
+  <div id="CookieConsent" class="cookie-banner" style="display: none;">
+    <p>We use cookies to improve your experience and for analytics. By continuing to use our site, you accept our use of cookies and our Privacy Policy.</p>
+    <div class="cookie-btns">
+      <button class="btn btn--primary" onclick="acceptCookies()">Accept</button>
+      <button class="btn btn--ghost" onclick="document.getElementById('CookieConsent').style.display='none'">Decline</button>
+    </div>
+  </div>
+  <style>
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--clr-ink);
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      z-index: 1000;
+      font-size: 0.85rem;
+    }
+    .cookie-banner p { margin: 0; }
+    .cookie-btns { display: flex; gap: 10px; }
+    .cookie-btns .btn { padding: 8px 16px; font-size: 0.8rem; }
+    .cookie-btns .btn--ghost { color: #fff; border-color: rgba(255,255,255,0.3); }
+    @media (max-width: 768px) {
+      .cookie-banner {
+        flex-direction: column;
+        text-align: center;
+        padding-bottom: 80px; /* avoid nav bar */
+      }
+    }
+  </style>
+
+  <script src="{{ 'script.js' | asset_url }}" defer></script>
+</body>
+</html>

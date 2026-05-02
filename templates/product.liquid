@@ -1,0 +1,615 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign compare_at = current_variant.compare_at_price %}
+{% assign price = current_variant.price %}
+{% if compare_at > price %}
+  {% assign discount_pct = compare_at | minus: price | times: 100 | divided_by: compare_at %}
+{% endif %}
+
+<!-- Pass variants data to JS -->
+<script>
+  window.productVariants = {{ product.variants | json }};
+</script>
+
+<div class="product-page">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      {% if collection %}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+        <span>›</span>
+      {% endif %}
+      <span>{{ product.title }}</span>
+    </nav>
+
+    <div class="product-page__inner">
+
+      <!-- GALLERY -->
+      <div class="product-gallery">
+        <div class="product-gallery__main" id="GalleryMain" onmousemove="zoomImage(event, this)" onmouseleave="resetZoomImage(this)">
+          {% if product.featured_image %}
+            <img
+              src="{{ product.featured_image | image_url: width: 900 }}"
+              alt="{{ product.featured_image.alt | default: product.title }}"
+              id="GalleryMainImg"
+              loading="eager"
+              fetchpriority="high">
+          {% else %}
+            {{ product | placeholder_svg_tag: 'product' }}
+          {% endif %}
+        </div>
+
+        {% if product.images.size > 1 %}
+          <div class="product-gallery__thumbs">
+            {% for image in product.images limit: 8 %}
+              <div class="product-gallery__thumb {% if forloop.first %}active{% endif %}"
+                   role="button"
+                   tabindex="0"
+                   aria-label="View product image {{ forloop.index }}"
+                   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); this.click();}"
+                   onclick="document.getElementById('GalleryMainImg').src='{{ image | image_url: width: 900 }}'; document.querySelectorAll('.product-gallery__thumb').forEach(t=>t.classList.remove('active')); this.classList.add('active');">
+                <img
+                  src="{{ image | image_url: width: 120 }}"
+                  alt="{{ image.alt | default: product.title }}"
+                  loading="lazy">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- PRODUCT INFO -->
+      <div class="product-info">
+        {% if product.vendor %}
+          <p class="product-info__vendor">{{ product.vendor }}</p>
+        {% endif %}
+
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        <!-- Live Viewer Count -->
+        <div class="live-viewers">
+          <span class="live-dot"></span>
+          <strong id="viewerCount">24</strong> people are viewing this right now
+        </div>
+        <script>
+          document.getElementById('viewerCount').innerText = Math.floor(Math.random() * (45 - 12 + 1)) + 12;
+        </script>
+        <style>
+          .live-viewers {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--clr-ink-light, #555);
+            margin-bottom: 15px;
+            padding: 4px 10px;
+            background: rgba(200, 30, 30, 0.05);
+            border-radius: 4px;
+            border: 1px solid rgba(200, 30, 30, 0.1);
+          }
+          .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #e53e3e;
+            border-radius: 50%;
+            animation: pulse-red 2s infinite;
+          }
+          @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(229, 62, 62, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+          }
+        </style>
+
+        <!-- Price block -->
+        <div class="product-info__price-block">
+          <span class="product-info__price">{{ price | money }}</span>
+          {% if compare_at > price %}
+            <s class="product-info__compare">{{ compare_at | money }}</s>
+            <span class="product-info__discount-badge">{{ discount_pct }}% OFF</span>
+          {% endif %}
+        </div>
+
+        <!-- EMI / BNPL Messaging -->
+        {% assign emi_amount = price | divided_by: 3 | money %}
+        <div class="emi-message" style="margin-bottom: 20px; font-size: 0.85rem; color: var(--clr-ink-muted); display: flex; align-items: center; gap: 6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          Pay in 3 interest-free EMIs of <strong>{{ emi_amount }}</strong> via Simpl or LazyPay.
+        </div>
+
+        <!-- Low stock warning -->
+        {% if current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 5 %}
+          <p class="low-stock-msg">Only {{ current_variant.inventory_quantity }} left in stock!</p>
+        {% endif %}
+
+        <!-- Variants / Options -->
+        {% unless product.has_only_default_variant %}
+          <div class="product-options">
+            {% for option in product.options_with_values %}
+              <div class="option-group" data-option-index="{{ forloop.index0 }}">
+                <p class="option-label">
+                  {{ option.name }}
+                  {% if option.name == 'Size' %}
+                    <span>— <a href="#" onclick="event.preventDefault(); document.getElementById('sizeGuideModal').style.display='flex';" style="color:var(--clr-maroon); text-decoration:underline">Size Guide</a></span>
+                  {% endif %}
+                </p>
+                <div class="option-buttons">
+                  {% for value in option.values %}
+                    {% assign variant_for_value = product.variants | where: "option1", value | first %}
+                    {% if product.options.size > 1 %}
+                      {% assign parent_index = "option" | append: forloop.parentloop.index %}
+                      {% assign variant_for_value = product.variants | where: parent_index, value | first %}
+                    {% endif %}
+                    
+                    {% assign is_color = false %}
+                    {% assign downcase_name = option.name | downcase %}
+                    {% if downcase_name == 'color' or downcase_name == 'colour' %}
+                      {% assign is_color = true %}
+                    {% endif %}
+
+                    {% if is_color %}
+                      {% assign color_handle = value | handleize %}
+                      <button
+                        type="button"
+                        class="option-btn option-btn--color {% if option.selected_value == value %}active{% endif %} {% unless variant_for_value.available %}unavailable{% endunless %}"
+                        data-value="{{ value }}"
+                        aria-label="{{ option.name }}: {{ value }}"
+                        title="{{ value }}"
+                        style="background-color: var(--swatch-{{ color_handle }}, {{ value | split: ' ' | last | downcase }});">
+                      </button>
+                    {% else %}
+                      <button
+                        type="button"
+                        class="option-btn {% if option.selected_value == value %}active{% endif %} {% unless variant_for_value.available %}unavailable{% endunless %}"
+                        data-value="{{ value }}"
+                        aria-label="{{ option.name }}: {{ value }}">
+                        {{ value }}
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endunless %}
+
+        <!-- Add to Cart Form -->
+        <form id="ProductForm" action="/cart/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+          <div class="blouse-customization" style="margin-bottom: 20px; padding: 15px; border: 1px dashed var(--clr-maroon); border-radius: 4px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
+              <input type="checkbox" name="properties[Add Blouse Stitching]" value="Yes (+₹800)" style="width: 18px; height: 18px;">
+              <span>Add custom blouse stitching <strong>(+₹800)</strong></span>
+            </label>
+            <p style="margin: 5px 0 0 28px; font-size: 0.8rem; color: var(--clr-ink-muted);">Our team will contact you for measurements on WhatsApp after order placement.</p>
+          </div>
+
+          <!-- Estimated Delivery Date -->
+          <div class="delivery-estimator" style="margin-bottom: 20px; font-size: 0.85rem; color: var(--clr-ink-muted); display: flex; align-items: center; gap: 8px; background: var(--clr-parchment, #fdf8f3); padding: 10px; border-radius: 4px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            <span>Order within <strong id="deliveryTimer">5 hrs 30 mins</strong> → Delivery by <strong id="deliveryDate" style="color: var(--clr-maroon);">...</strong></span>
+          </div>
+          <script>
+            (function(){
+              const now = new Date();
+              let delivery = new Date();
+              delivery.setDate(now.getDate() + 5);
+              const options = { weekday: 'short', month: 'short', day: 'numeric' };
+              document.getElementById('deliveryDate').textContent = delivery.toLocaleDateString('en-IN', options);
+
+              const endOfDay = new Date();
+              endOfDay.setHours(23, 59, 59);
+              const diffMs = endOfDay - now;
+              const hrs = Math.floor(diffMs / 3600000);
+              const mins = Math.floor((diffMs % 3600000) / 60000);
+              document.getElementById('deliveryTimer').textContent = hrs + ' hrs ' + mins + ' mins';
+            })();
+          </script>
+
+          <div class="product-atc">
+            <!-- Quantity -->
+            <div class="qty-selector">
+              <button type="button" aria-label="Decrease quantity">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="99" aria-label="Quantity">
+              <button type="button" aria-label="Increase quantity">+</button>
+            </div>
+
+            <!-- ATC Button -->
+            <button
+              type="submit"
+              class="btn btn--primary atc-btn"
+              {% unless current_variant.available %}disabled{% endunless %}>
+              {% if current_variant.available %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                Add to Bag
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+
+            <!-- Wishlist -->
+            <button
+              type="button"
+              class="btn btn--secondary wishlist-full-btn"
+              onclick="toggleWishlist(this, '{{ product.handle }}')"
+              aria-label="Add to wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              Wishlist
+            </button>
+            <button type="button" class="btn btn--ghost" style="padding: 13px 20px;" onclick="shareWishlist()" aria-label="Share wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              Share
+            </button>
+          </div>
+        </form>
+
+        <!-- Trust signals (inline) -->
+        <div class="product-trust-strip">
+          <div class="product-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Authentic & Handpicked</span>
+          </div>
+          <div class="product-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Free shipping above ₹999</span>
+          </div>
+          <div class="product-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            <span>7-day easy returns</span>
+          </div>
+        </div>
+
+        <!-- Description Accordion -->
+        <div class="product-accordion">
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
+              Product Description
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content__inner">
+                {{ product.description }}
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
+              Fabric & Care
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content__inner">
+                <p>• Dry clean recommended for silk sarees</p>
+                <p>• Hand wash in cold water for cotton & linen</p>
+                <p>• Do not tumble dry — lay flat to dry</p>
+                <p>• Iron on reverse side at medium heat</p>
+                <p>• Store folded in muslin cloth away from direct sunlight</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
+              Shipping & Returns
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content__inner">
+                <p>• Orders dispatched within 2-3 business days</p>
+                <p>• Free shipping on orders above ₹999</p>
+                <p>• Standard delivery: 5-7 business days</p>
+                <p>• Express delivery available at checkout</p>
+                <p>• Easy 7-day returns for unworn, unwashed items</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Share -->
+        <div class="product-share">
+          <span>Share:</span>
+          <a href="https://wa.me/?text={{ product.title | url_encode }}%20{{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" aria-label="Share on WhatsApp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete the Look -->
+  {% if product.metafields.custom.complete_the_look %}
+  <div class="complete-the-look">
+    <div class="container">
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 20px; text-align: center;">Complete the Look</h3>
+      <div class="ctl-grid" style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px;">
+        {% for related_product in product.metafields.custom.complete_the_look.value %}
+          <div class="product-card" style="min-width: 200px; flex: 1;">
+            <a href="{{ related_product.url }}">
+              <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title }}" style="width: 100%; border-radius: 4px;">
+              <h4 style="font-size: 0.9rem; margin: 10px 0 5px;">{{ related_product.title }}</h4>
+              <p style="color: var(--clr-maroon); font-weight: 500; margin: 0;">{{ related_product.price | money }}</p>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Recently Viewed -->
+  <div class="recently-viewed-section" style="display: none; background: #fafafa; padding: 40px 0;">
+    <div class="container">
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 20px; text-align: center;">Recently Viewed</h3>
+      <div id="RecentlyViewedGrid" style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px;">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Mobile ATC -->
+  <div class="sticky-atc" id="StickyATC" style="display: none;">
+    <div class="sticky-atc__info">
+      <div class="sticky-atc__title">{{ product.title }}</div>
+      <div class="sticky-atc__price">{{ price | money }}</div>
+    </div>
+    <button class="btn btn--primary sticky-atc__btn" onclick="document.querySelector('#ProductForm').dispatchEvent(new Event('submit'))" {% unless current_variant.available %}disabled{% endunless %}>
+      {% if current_variant.available %}Add to Bag{% else %}Sold Out{% endif %}
+    </button>
+  </div>
+</div>
+
+<!-- Size Guide Modal -->
+<div id="sizeGuideModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sizeGuideTitle" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;" onclick="if(event.target===this) this.style.display='none';">
+  <div class="modal-content" style="background: #fff; padding: 30px; border-radius: 8px; max-width: 500px; width: 90%; position: relative;">
+    <button onclick="document.getElementById('sizeGuideModal').style.display='none';" aria-label="Close size guide" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    <h2 id="sizeGuideTitle" style="margin-top: 0; font-family: 'Cormorant Garamond', serif;">Size Guide</h2>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+      <button onclick="document.getElementById('sg-in').style.display='table'; document.getElementById('sg-cm').style.display='none';">Inches</button>
+      <button onclick="document.getElementById('sg-in').style.display='none'; document.getElementById('sg-cm').style.display='table';">Centimeters</button>
+    </div>
+    <table id="sg-in" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+      <tr style="border-bottom: 1px solid #eee;"><th style="padding: 8px 0;">Size</th><th>Bust</th><th>Waist</th><th>Hip</th></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">S</td><td>34"</td><td>28"</td><td>36"</td></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">M</td><td>36"</td><td>30"</td><td>38"</td></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">L</td><td>38"</td><td>32"</td><td>40"</td></tr>
+      <tr><td style="padding: 8px 0;">XL</td><td>40"</td><td>34"</td><td>42"</td></tr>
+    </table>
+    <table id="sg-cm" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; display: none;">
+      <tr style="border-bottom: 1px solid #eee;"><th style="padding: 8px 0;">Size</th><th>Bust</th><th>Waist</th><th>Hip</th></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">S</td><td>86 cm</td><td>71 cm</td><td>91 cm</td></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">M</td><td>91 cm</td><td>76 cm</td><td>96 cm</td></tr>
+      <tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px 0;">L</td><td>96 cm</td><td>81 cm</td><td>101 cm</td></tr>
+      <tr><td style="padding: 8px 0;">XL</td><td>101 cm</td><td>86 cm</td><td>106 cm</td></tr>
+    </table>
+  </div>
+</div>
+
+<style>
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: var(--clr-ink-muted);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.breadcrumb a:hover { color: var(--clr-maroon); }
+
+.product-trust-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: var(--clr-parchment);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+}
+.product-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .83rem;
+  color: var(--clr-ink-light);
+}
+.product-trust-item svg { color: var(--clr-maroon); flex-shrink: 0; }
+
+.product-share {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: .82rem;
+  color: var(--clr-ink-muted);
+}
+.product-share a {
+  color: #25D366;
+  transition: opacity var(--transition);
+}
+.product-share a:hover { opacity: .75; }
+
+.wishlist-full-btn {
+  padding: 13px 20px;
+}
+
+.option-btn--color {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  position: relative;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #e0e0e0;
+}
+.option-btn--color.active {
+  box-shadow: 0 0 0 2px var(--clr-maroon, #7a2e2e);
+  border: 2px solid #fff;
+}
+.option-btn--color.unavailable::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background: red;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+  .product-page__inner { grid-template-columns: 1fr; }
+  .product-gallery__main { aspect-ratio: 4/5; overflow: hidden; }
+}
+
+.product-gallery__main {
+  overflow: hidden;
+  cursor: zoom-in;
+  position: relative;
+}
+.product-gallery__main img {
+  transition: transform 0.1s ease, transform-origin 0.1s ease;
+}
+
+.sticky-atc {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.sticky-atc.visible {
+  transform: translateY(0);
+}
+.sticky-atc__info {
+  display: flex;
+  flex-direction: column;
+}
+.sticky-atc__title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+.sticky-atc__price {
+  font-weight: 600;
+  color: var(--clr-maroon);
+}
+.sticky-atc__btn {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+}
+@media (min-width: 769px) {
+  .sticky-atc { display: none !important; }
+}
+</style>
+
+<!-- SEO Schema: Product & Breadcrumbs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "image": [
+    {%- for image in product.images -%}
+      {{ image | image_url: width: 1000 | prepend: "https:" | json }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  "description": {{ product.description | strip_html | json }},
+  {%- if product.vendor -%}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | json }}
+  },
+  {%- endif -%}
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "lowPrice": {{ product.price_min | divided_by: 100.0 }},
+    "highPrice": {{ product.price_max | divided_by: 100.0 }},
+    "offerCount": {{ product.variants.size }},
+    "offers": [
+      {%- for variant in product.variants -%}
+        {
+          "@type": "Offer",
+          "name": {{ variant.title | json }},
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "price": {{ variant.price | divided_by: 100.0 }},
+          "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+          "url": {{ shop.url | append: variant.url | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ shop.url | json }}
+    }
+    {%- if collection -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ collection.title | json }},
+      "item": {{ shop.url | append: collection.url | json }}
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": {{ product.title | json }},
+      "item": {{ shop.url | append: product.url | json }}
+    }
+    {%- else -%}
+    ,{
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ product.title | json }},
+      "item": {{ shop.url | append: product.url | json }}
+    }
+    {%- endif -%}
+  ]
+}
+</script>
+
+<script>
+function zoomImage(e, container) {
+  if (window.innerWidth <= 768) return; // Only desktop
+  const img = container.querySelector('img');
+  if (!img) return;
+  const rect = container.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const xPercent = (x / rect.width) * 100;
+  const yPercent = (y / rect.height) * 100;
+  
+  img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+  img.style.transform = 'scale(2)';
+}
+function resetZoomImage(container) {
+  const img = container.querySelector('img');
+  if (img) {
+    img.style.transform = 'scale(1)';
+    img.style.transformOrigin = 'center center';
+  }
+}
+</script>

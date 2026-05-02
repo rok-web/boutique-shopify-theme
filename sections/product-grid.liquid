@@ -1,0 +1,193 @@
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "grid_columns",
+      "label": "Products per row (desktop)",
+      "options": [
+        {"value": "3", "label": "3"},
+        {"value": "4", "label": "4"}
+      ],
+      "default": "4"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filters sidebar",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="collection-page">
+  <div class="collection-header">
+    <div class="container">
+      <h1 class="collection-title">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <div class="collection-description">{{ collection.description }}</div>
+      {% endif %}
+      <p class="collection-count">{{ collection.products_count }} products</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="collection-layout {% if section.settings.show_filters %}collection-layout--with-filters{% endif %}">
+
+      <!-- Filter Sidebar -->
+      {% if section.settings.show_filters %}
+        <aside class="filter-sidebar" id="FilterSidebar">
+          <div class="filter-sidebar__header">
+            <h3>Filter & Sort</h3>
+            <button class="filter-close" onclick="toggleFilters()" aria-label="Close filters">✕</button>
+          </div>
+
+          {% for filter in collection.filters %}
+            <div class="filter-group">
+              <button class="filter-group__toggle" onclick="this.parentElement.classList.toggle('open')">
+                {{ filter.label }}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="filter-group__options">
+                {% case filter.type %}
+                  {% when 'list' %}
+                    {% for value in filter.values %}
+                      <label class="filter-option">
+                        <input
+                          type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          {% if value.active %}checked{% endif %}
+                          onchange="applyFilters()">
+                        <span>{{ value.label }}</span>
+                        <span class="filter-count">({{ value.count }})</span>
+                      </label>
+                    {% endfor %}
+                  {% when 'price_range' %}
+                    <div class="price-range">
+                      <input type="number" placeholder="Min ₹"
+                        name="{{ filter.min_value.param_name }}"
+                        value="{{ filter.min_value.value | money_without_currency }}">
+                      <span>—</span>
+                      <input type="number" placeholder="Max ₹"
+                        name="{{ filter.max_value.param_name }}"
+                        value="{{ filter.max_value.value | money_without_currency }}">
+                    </div>
+                {% endcase %}
+              </div>
+            </div>
+          {% endfor %}
+
+          <!-- Sort (mobile in sidebar) -->
+          <div class="filter-group filter-group--sort">
+            <label class="filter-group__toggle">Sort by</label>
+            <select onchange="applySort(this.value)" class="sort-select">
+              <option value="manual">Featured</option>
+              <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+              <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+              <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest First</option>
+              <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+            </select>
+          </div>
+        </aside>
+      {% endif %}
+
+      <!-- Product Grid -->
+      <div class="products-area">
+
+        <!-- Toolbar -->
+        <div class="grid-toolbar">
+          {% if section.settings.show_filters %}
+            <button class="filter-toggle-btn" onclick="toggleFilters()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              Filters
+              {% assign active_count = 0 %}
+              {% for filter in collection.filters %}
+                {% assign active_count = active_count | plus: filter.active_values.size %}
+              {% endfor %}
+              {% if active_count > 0 %}<span class="active-filter-count">{{ active_count }}</span>{% endif %}
+            </button>
+          {% endif %}
+
+          <!-- Active filter tags -->
+          <div class="active-filters">
+            {% for filter in collection.filters %}
+              {% for value in filter.active_values %}
+                <button class="active-filter-tag" onclick="removeFilter('{{ value.param_name }}', '{{ value.value }}')">
+                  {{ value.label }} ✕
+                </button>
+              {% endfor %}
+            {% endfor %}
+          </div>
+
+          <!-- Sort (desktop) -->
+          <select onchange="applySort(this.value)" class="sort-select sort-select--desktop" aria-label="Sort by">
+            <option value="manual" {% if collection.sort_by == 'manual' or collection.sort_by == blank %}selected{% endif %}>Sort: Featured</option>
+            <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low–High</option>
+            <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High–Low</option>
+            <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest First</option>
+            <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+          </select>
+        </div>
+
+        <!-- Grid -->
+        <div class="product-grid product-grid--{{ section.settings.grid_columns }}" id="ProductGrid">
+          {% paginate collection.products by section.settings.products_per_page %}
+            {% for product in collection.products %}
+              {% render 'product-card', product: product %}
+            {% else %}
+              <div class="empty-collection">
+                <p>No products found. <a href="{{ collection.url }}">Clear filters</a></p>
+              </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if paginate.pages > 1 %}
+              <div class="pagination">
+                {% if paginate.previous %}
+                  <a href="{{ paginate.previous.url }}" class="pagination-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    Prev
+                  </a>
+                {% endif %}
+                {% for part in paginate.parts %}
+                  {% if part.is_link %}
+                    <a href="{{ part.url }}" class="pagination-num">{{ part.title }}</a>
+                  {% else %}
+                    {% if part.title == paginate.current_page %}
+                      <span class="pagination-num pagination-num--active">{{ part.title }}</span>
+                    {% else %}
+                      <span class="pagination-ellipsis">{{ part.title }}</span>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if paginate.next %}
+                  <a href="{{ paginate.next.url }}" class="pagination-btn">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                  </a>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endpaginate %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

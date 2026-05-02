@@ -1,0 +1,95 @@
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Trending Right Now"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Loved by thousands of women across India"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to show"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Products to show",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all button text",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "view_all_url",
+      "label": "View all URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="featured-products-section">
+  <div class="container">
+    <div class="section-header section-header--flex">
+      <div>
+        {% if section.settings.title != blank %}
+          <h2 class="section-title">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+      {% if section.settings.view_all_text != blank %}
+        <a href="{{ section.settings.view_all_url | default: '/collections/all' }}" class="btn btn--outline">
+          {{ section.settings.view_all_text }}
+        </a>
+      {% endif %}
+    </div>
+
+    {% assign collection = collections[section.settings.collection.handle] %}
+    {% assign products_to_show = section.settings.products_to_show %}
+
+    <div class="product-slider" id="ProductSlider">
+      <div class="product-slider__track" id="SliderTrack">
+        {% if collection != blank %}
+          {% for product in collection.products limit: products_to_show %}
+            {% render 'product-card', product: product %}
+          {% endfor %}
+        {% else %}
+          {% for i in (1..8) %}
+            {% render 'product-card-placeholder', index: i %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <button class="slider-btn slider-btn--prev" onclick="slideProducts(-1)" aria-label="Previous">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="slider-btn slider-btn--next" onclick="slideProducts(1)" aria-label="Next">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="slider-dots" id="SliderDots"></div>
+  </div>
+</section>

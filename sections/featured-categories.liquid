@@ -1,0 +1,98 @@
+{% schema %}
+{
+  "name": "Featured Categories",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Shop by Category"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Category image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Category name",
+          "default": "Sarees"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "200+ styles"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Category link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Categories",
+      "blocks": [
+        {"type": "category"},
+        {"type": "category"},
+        {"type": "category"},
+        {"type": "category"}
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="categories-section">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+        <div class="section-divider"><span></span></div>
+      </div>
+    {% endif %}
+
+    <div class="categories-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'category' %}
+          <a href="{{ block.settings.url | default: '/collections/all' }}" class="category-card" {{ block.shopify_attributes }}>
+            <div class="category-card__media">
+              {% if block.settings.image %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 600 }}"
+                  alt="{{ block.settings.title }}"
+                  loading="lazy"
+                  class="category-card__img">
+              {% else %}
+                <div class="category-card__placeholder">
+                  <span>{{ block.settings.title | slice: 0 }}</span>
+                </div>
+              {% endif %}
+              <div class="category-card__overlay"></div>
+            </div>
+            <div class="category-card__content">
+              <h3 class="category-card__title">{{ block.settings.title }}</h3>
+              {% if block.settings.subtitle %}
+                <p class="category-card__subtitle">{{ block.settings.subtitle }}</p>
+              {% endif %}
+              <span class="category-card__cta">
+                Shop Now
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

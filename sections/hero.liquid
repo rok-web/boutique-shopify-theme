@@ -1,0 +1,171 @@
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Hero image (mobile)"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "New Arrivals — Monsoon 2025"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Draped in\nTimeless Grace"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Handwoven silks, Kanjivaram, Banarasi & more — curated for the modern Indian woman"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Secondary button text",
+      "default": "View Lookbook"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_url",
+      "label": "Secondary button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="hero-section">
+  <div class="hero-media">
+    {% if section.settings.hero_image != blank %}
+      <img
+        class="hero-img hero-img--desktop"
+        src="{{ section.settings.hero_image | image_url: width: 1800 }}"
+        srcset="{{ section.settings.hero_image | image_url: width: 800 }} 800w,
+                {{ section.settings.hero_image | image_url: width: 1200 }} 1200w,
+                {{ section.settings.hero_image | image_url: width: 1800 }} 1800w"
+        alt="{{ section.settings.heading }}"
+        loading="eager"
+        fetchpriority="high">
+      {% if section.settings.hero_image_mobile %}
+        <img
+          class="hero-img hero-img--mobile"
+          src="{{ section.settings.hero_image_mobile | image_url: width: 800 }}"
+          alt="{{ section.settings.heading }}"
+          loading="eager">
+      {% endif %}
+    {% else %}
+      <div class="hero-placeholder">
+        <div class="hero-placeholder__pattern"></div>
+      </div>
+    {% endif %}
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    {% if section.settings.eyebrow != blank %}
+      <p class="hero-eyebrow">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h1 class="hero-heading">{{ section.settings.heading | newline_to_br }}</h1>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="hero-subheading">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="hero-ctas">
+      {% if section.settings.cta_text != blank %}
+        <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="btn btn--primary btn--hero">
+          {{ section.settings.cta_text }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      {% endif %}
+      {% if section.settings.cta_secondary_text != blank %}
+        <a href="{{ section.settings.cta_secondary_url | default: '#' }}" class="btn btn--ghost btn--hero">
+          {{ section.settings.cta_secondary_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- Trust Signal: Featured In -->
+<div class="featured-in-bar">
+  <p class="featured-in-text">As featured in</p>
+  <div class="featured-in-logos">
+    <span class="fi-logo" style="font-family:'Cormorant Garamond',serif;">VOGUE</span>
+    <span class="fi-logo" style="font-family:'Jost',sans-serif;font-weight:400;letter-spacing:0px;">Harper's BAZAAR</span>
+    <span class="fi-logo" style="font-family:'Jost',sans-serif;font-weight:300;">ELLE</span>
+    <span class="fi-logo" style="font-family:'Cormorant Garamond',serif;font-style:italic;">GQ</span>
+  </div>
+</div>
+<style>
+.featured-in-bar {
+  text-align: center;
+  padding: 30px 20px;
+  background: var(--clr-parchment, #fdf8f3);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.featured-in-text {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--clr-ink-muted, #666);
+  margin-bottom: 15px;
+}
+.featured-in-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  opacity: 0.6;
+  filter: grayscale(100%);
+  transition: opacity 0.3s ease;
+}
+.featured-in-logos:hover {
+  opacity: 0.8;
+}
+.fi-logo {
+  font-size: 1.5rem;
+  color: #111;
+}
+@media (max-width: 768px) {
+  .featured-in-logos { gap: 20px; }
+  .fi-logo { font-size: 1.1rem; }
+}
+</style>

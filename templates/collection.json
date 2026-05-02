@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "product-grid": {
+      "type": "product-grid",
+      "settings": {
+        "products_per_page": 24,
+        "grid_columns": "4",
+        "show_filters": true
+      }
+    }
+  },
+  "order": ["product-grid"]
+}

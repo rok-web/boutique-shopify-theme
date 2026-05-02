@@ -1,0 +1,117 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "New Arrivals — Monsoon 2025",
+        "heading": "Draped in\nTimeless Grace",
+        "subheading": "Handwoven silks, Kanjivaram, Banarasi & more — curated for the modern Indian woman",
+        "cta_text": "Explore Collection",
+        "cta_url": "/collections/all",
+        "cta_secondary_text": "View Lookbook",
+        "cta_secondary_url": "/pages/lookbook"
+      }
+    },
+    "featured-categories": {
+      "type": "featured-categories",
+      "blocks": {
+        "cat1": {
+          "type": "category",
+          "settings": {
+            "title": "Sarees",
+            "subtitle": "200+ styles",
+            "url": "/collections/sarees"
+          }
+        },
+        "cat2": {
+          "type": "category",
+          "settings": {
+            "title": "Suits & Sets",
+            "subtitle": "Comfort & elegance",
+            "url": "/collections/suits"
+          }
+        },
+        "cat3": {
+          "type": "category",
+          "settings": {
+            "title": "Lehengas",
+            "subtitle": "For every occasion",
+            "url": "/collections/lehenga"
+          }
+        },
+        "cat4": {
+          "type": "category",
+          "settings": {
+            "title": "Kurtis",
+            "subtitle": "Daily wear & more",
+            "url": "/collections/kurtis"
+          }
+        }
+      },
+      "block_order": ["cat1", "cat2", "cat3", "cat4"],
+      "settings": {
+        "title": "Shop by Category"
+      }
+    },
+    "featured-products": {
+      "type": "featured-products",
+      "settings": {
+        "title": "Trending Right Now",
+        "subtitle": "Loved by thousands of women across India",
+        "products_to_show": 8,
+        "view_all_text": "View All",
+        "view_all_url": "/collections/all"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "review1": {
+          "type": "review",
+          "settings": {
+            "review_text": "Absolutely gorgeous saree! The quality exceeded my expectations. The fabric drapes beautifully and the colours are so vibrant.",
+            "reviewer_name": "Priya Sharma",
+            "reviewer_location": "Mumbai",
+            "rating": "5",
+            "product_bought": "Kanjivaram Silk Saree"
+          }
+        },
+        "review2": {
+          "type": "review",
+          "settings": {
+            "review_text": "I ordered for my daughter's wedding and the whole family loved the suits. Stitching quality is exceptional and delivery was super fast.",
+            "reviewer_name": "Meena Iyer",
+            "reviewer_location": "Bangalore",
+            "rating": "5",
+            "product_bought": "Banarasi Suit Set"
+          }
+        },
+        "review3": {
+          "type": "review",
+          "settings": {
+            "review_text": "Finally a boutique that ships authentic handloom! The Pochampally Ikat I bought is exactly as shown. Will recommend to everyone.",
+            "reviewer_name": "Sunitha Reddy",
+            "reviewer_location": "Hyderabad",
+            "rating": "5",
+            "product_bought": "Pochampally Ikat Saree"
+          }
+        },
+        "review4": {
+          "type": "review",
+          "settings": {
+            "review_text": "The lehenga fits perfectly with minimal alterations. The embroidery work is stunning — worth every rupee. Very happy customer!",
+            "reviewer_name": "Anjali Patel",
+            "reviewer_location": "Ahmedabad",
+            "rating": "5",
+            "product_bought": "Embroidered Lehenga Choli"
+          }
+        }
+      },
+      "block_order": ["review1", "review2", "review3", "review4"],
+      "settings": {
+        "title": "What Our Customers Say"
+      }
+    }
+  },
+  "order": ["hero", "featured-categories", "featured-products", "testimonials"]
+}
