@@ -74,9 +74,14 @@
                   loading="lazy"
                   class="category-card__img">
               {% else %}
-                <div class="category-card__placeholder">
-                  <span>{{ block.settings.title | slice: 0 }}</span>
-                </div>
+                {% assign cat_index = forloop.index0 | modulo: 4 %}
+                {% assign cat_images = "category_sarees.png|category_suits.png|category_lehengas.png|category_kurtis.png" | split: "|" %}
+                <img
+                  src="{{ cat_images[cat_index] | asset_url }}"
+                  alt="{{ block.settings.title }}"
+                  loading="lazy"
+                  class="category-card__img"
+                  style="width: 100%; height: 100%; object-fit: cover;">
               {% endif %}
               <div class="category-card__overlay"></div>
             </div>
