@@ -54,7 +54,11 @@
              width="{{ section.settings.logo_width }}"
              loading="eager">
       {% else %}
-        <span class="logo-text">{{ section.settings.logo_text }}</span>
+        <img src="{{ 'logo.png' | asset_url }}"
+             alt="Vasthralaya"
+             width="{{ section.settings.logo_width }}"
+             style="display: block; max-height: 50px; width: auto;"
+             loading="eager">
       {% endif %}
     </a>
 
