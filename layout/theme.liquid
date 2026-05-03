@@ -151,8 +151,8 @@
     .floating-wa {
       position: fixed;
       bottom: 30px !important;
-      left: 30px !important;
-      right: auto !important;
+      right: 30px !important;
+      left: auto !important;
       width: 60px;
       height: 60px;
       background-color: #25D366;
@@ -176,8 +176,9 @@
     }
     @media (max-width: 768px) {
       .floating-wa {
-        bottom: 90px; /* Above the mobile nav bar */
-        left: 20px;
+        bottom: 90px !important; /* Above the mobile nav bar */
+        right: 20px !important;
+        left: auto !important;
         width: 50px;
         height: 50px;
       }
