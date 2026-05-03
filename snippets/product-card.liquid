@@ -17,11 +17,12 @@
 
   <!-- Badges -->
   <div class="product-card__badges">
+    {% assign seven_days_ago = 'now' | date: '%s' | minus: 604800 | date: '%Y-%m-%dT%H:%M:%SZ' %}
     {% if product.available == false %}
       <span class="badge badge--sold-out">Sold Out</span>
     {% elsif discount_pct > 0 %}
       <span class="badge badge--sale">{{ discount_pct }}% OFF</span>
-    {% elsif product.created_at > 'now' | date: '%s' | minus: 604800 | date: '%Y-%m-%dT%H:%M:%SZ' %}
+    {% elsif product.created_at > seven_days_ago %}
       <span class="badge badge--new">New</span>
     {% endif %}
 
