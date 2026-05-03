@@ -90,18 +90,18 @@
 
   <div class="hero-content">
     {% if section.settings.eyebrow != blank %}
-      <p class="hero-eyebrow">{{ section.settings.eyebrow }}</p>
+      <p class="hero-eyebrow" data-animate>{{ section.settings.eyebrow }}</p>
     {% endif %}
 
     {% if section.settings.heading != blank %}
-      <h1 class="hero-heading">{{ section.settings.heading | newline_to_br }}</h1>
+      <h1 class="hero-heading" data-animate>{{ section.settings.heading | newline_to_br }}</h1>
     {% endif %}
 
     {% if section.settings.subheading != blank %}
-      <p class="hero-subheading">{{ section.settings.subheading }}</p>
+      <p class="hero-subheading" data-animate>{{ section.settings.subheading }}</p>
     {% endif %}
 
-    <div class="hero-ctas">
+    <div class="hero-ctas" data-animate>
       {% if section.settings.cta_text != blank %}
         <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="btn btn--primary btn--hero">
           {{ section.settings.cta_text }}

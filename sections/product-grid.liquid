@@ -58,53 +58,67 @@
             <button class="filter-close" onclick="toggleFilters()" aria-label="Close filters">✕</button>
           </div>
 
-          {% for filter in collection.filters %}
-            <div class="filter-group">
-              <button class="filter-group__toggle" onclick="this.parentElement.classList.toggle('open')">
-                {{ filter.label }}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <div class="filter-group__options">
-                {% case filter.type %}
-                  {% when 'list' %}
-                    {% for value in filter.values %}
-                      <label class="filter-option">
-                        <input
-                          type="checkbox"
-                          name="{{ value.param_name }}"
-                          value="{{ value.value }}"
-                          {% if value.active %}checked{% endif %}
-                          onchange="applyFilters()">
-                        <span>{{ value.label }}</span>
-                        <span class="filter-count">({{ value.count }})</span>
-                      </label>
-                    {% endfor %}
-                  {% when 'price_range' %}
-                    <div class="price-range">
-                      <input type="number" placeholder="Min ₹"
-                        name="{{ filter.min_value.param_name }}"
-                        value="{{ filter.min_value.value | money_without_currency }}">
-                      <span>—</span>
-                      <input type="number" placeholder="Max ₹"
-                        name="{{ filter.max_value.param_name }}"
-                        value="{{ filter.max_value.value | money_without_currency }}">
-                    </div>
-                {% endcase %}
+          <form id="FacetFiltersForm" class="filter-form">
+            {% for filter in collection.filters %}
+              <div class="filter-group">
+                <button type="button" class="filter-group__toggle" onclick="this.parentElement.classList.toggle('open')">
+                  {{ filter.label }}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="filter-group__options">
+                  {% case filter.type %}
+                    {% when 'list' %}
+                      {% for value in filter.values %}
+                        <label class="filter-option">
+                          <input
+                            type="checkbox"
+                            name="{{ value.param_name }}"
+                            value="{{ value.value }}"
+                            {% if value.active %}checked{% endif %}
+                            onchange="applyFilters()">
+                          <span>{{ value.label }}</span>
+                          <span class="filter-count">({{ value.count }})</span>
+                        </label>
+                      {% endfor %}
+                    {% when 'price_range' %}
+                      <div class="price-range">
+                        <div class="price-range__field">
+                          <span>₹</span>
+                          <input type="number" placeholder="Min"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                            onchange="applyFilters()">
+                        </div>
+                        <span>—</span>
+                        <div class="price-range__field">
+                          <span>₹</span>
+                          <input type="number" placeholder="Max"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                            onchange="applyFilters()">
+                        </div>
+                      </div>
+                  {% endcase %}
+                </div>
               </div>
-            </div>
-          {% endfor %}
+            {% endfor %}
 
-          <!-- Sort (mobile in sidebar) -->
-          <div class="filter-group filter-group--sort">
-            <label class="filter-group__toggle">Sort by</label>
-            <select onchange="applySort(this.value)" class="sort-select">
-              <option value="manual">Featured</option>
-              <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
-              <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
-              <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest First</option>
-              <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
-            </select>
-          </div>
+            <!-- Sort (mobile in sidebar) -->
+            <div class="filter-group filter-group--sort">
+              <label class="filter-group__toggle">Sort by</label>
+              <select name="sort_by" onchange="applySort(this.value)" class="sort-select">
+                <option value="manual">Featured</option>
+                <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+                <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest First</option>
+                <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+              </select>
+            </div>
+            
+            <div class="filter-sidebar__footer">
+              <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="btn btn--outline btn--full">Clear All</a>
+            </div>
+          </form>
         </aside>
       {% endif %}
 

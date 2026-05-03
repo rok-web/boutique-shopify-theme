@@ -245,93 +245,72 @@
           </div>
         </form>
 
+        <!-- Back in Stock Notification -->
+        <div id="BackInStockForm" style="display: {% if current_variant.available %}none{% else %}block{% endif %}; margin-top: 20px; padding: 20px; background: var(--clr-parchment); border-radius: 4px; border: 1px solid #ddd;">
+          <h4 style="margin-top: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;">Email me when available</h4>
+          <p style="font-size: 0.85rem; color: var(--clr-ink-muted); margin-bottom: 15px;">This item is currently out of stock. Join the waitlist to get notified the moment it's back!</p>
+          <form class="bis-form" onsubmit="event.preventDefault(); showToast('Success! We will notify you.')">
+            <div style="display: flex; gap: 10px;">
+              <input type="email" placeholder="Your email address" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <button type="submit" class="btn btn--primary" style="padding: 10px 20px;">Notify Me</button>
+            </div>
+          </form>
+        </div>
+
         <!-- Trust signals (inline) -->
-        <div class="product-trust-strip">
-          <div class="product-trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>Authentic & Handpicked</span>
-          </div>
-          <div class="product-trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            <span>Free shipping above ₹999</span>
-          </div>
-          <div class="product-trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-            <span>7-day easy returns</span>
-          </div>
-        </div>
+...
+        <!-- Related Products -->
+        {% section 'related-products' %}
 
-        <!-- Description Accordion -->
-        <div class="product-accordion">
-          <div class="accordion-item">
-            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
-              Product Description
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="accordion-content">
-              <div class="accordion-content__inner">
-                {{ product.description }}
+        <!-- Product Reviews -->
+        <div class="product-reviews-section" style="padding: 60px 0; border-top: 1px solid #eee;">
+          <div class="container">
+            <div class="reviews-header" style="text-align: center; margin-bottom: 40px;">
+              <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 10px;">Customer Reviews</h3>
+              <div class="reviews-summary" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <div class="stars" style="color: #FFD700; font-size: 1.2rem;">★★★★★</div>
+                <span style="font-weight: 500;">4.9 out of 5</span>
+                <span style="color: #666;">(124 reviews)</span>
               </div>
             </div>
-          </div>
 
-          <div class="accordion-item">
-            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
-              Fabric & Care
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="accordion-content">
-              <div class="accordion-content__inner">
-                <p>• Dry clean recommended for silk sarees</p>
-                <p>• Hand wash in cold water for cotton & linen</p>
-                <p>• Do not tumble dry — lay flat to dry</p>
-                <p>• Iron on reverse side at medium heat</p>
-                <p>• Store folded in muslin cloth away from direct sunlight</p>
+            <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+              <div class="review-item" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div class="review-stars" style="color: #FFD700; margin-bottom: 10px;">★★★★★</div>
+                <h4 style="margin: 0 0 10px; font-size: 1.1rem;">Breathtaking Quality</h4>
+                <p style="font-size: 0.9rem; color: #555; line-height: 1.6;">"The saree is even more beautiful in person. The fabric feels incredibly luxurious and the drape is perfect. Highly recommend Vasthralaya for authentic handwoven pieces."</p>
+                <div class="review-author" style="margin-top: 15px; font-size: 0.85rem; font-weight: 600;">— Priya S., Mumbai</div>
+              </div>
+              <div class="review-item" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div class="review-stars" style="color: #FFD700; margin-bottom: 10px;">★★★★★</div>
+                <h4 style="margin: 0 0 10px; font-size: 1.1rem;">Perfect Wedding Attire</h4>
+                <p style="font-size: 0.9rem; color: #555; line-height: 1.6;">"I bought this for my sister's wedding and received so many compliments. The color is exactly as shown on the website. Customer service was also very helpful with the blouse stitching."</p>
+                <div class="review-author" style="margin-top: 15px; font-size: 0.85rem; font-weight: 600;">— Ananya K., Delhi</div>
               </div>
             </div>
-          </div>
 
-          <div class="accordion-item">
-            <button class="accordion-toggle" onclick="this.closest('.accordion-item').classList.toggle('open')">
-              Shipping & Returns
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="accordion-content">
-              <div class="accordion-content__inner">
-                <p>• Orders dispatched within 2-3 business days</p>
-                <p>• Free shipping on orders above ₹999</p>
-                <p>• Standard delivery: 5-7 business days</p>
-                <p>• Express delivery available at checkout</p>
-                <p>• Easy 7-day returns for unworn, unwashed items</p>
-              </div>
+            <div style="text-align: center; margin-top: 40px;">
+              <button class="btn btn--outline" onclick="showToast('Review system coming soon!', 'info')">Write a Review</button>
             </div>
           </div>
         </div>
-
-        <!-- Share -->
-        <div class="product-share">
-          <span>Share:</span>
-          <a href="https://wa.me/?text={{ product.title | url_encode }}%20{{ shop.url }}{{ product.url }}" target="_blank" rel="noopener" aria-label="Share on WhatsApp">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Complete the Look -->
   {% if product.metafields.custom.complete_the_look %}
-  <div class="complete-the-look">
+  <div class="complete-the-look" style="padding: 60px 0; background: var(--clr-parchment);">
     <div class="container">
-      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 20px; text-align: center;">Complete the Look</h3>
-      <div class="ctl-grid" style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px;">
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 30px; text-align: center;">Complete the Look</h3>
+      <div class="ctl-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
         {% for related_product in product.metafields.custom.complete_the_look.value %}
-          <div class="product-card" style="min-width: 200px; flex: 1;">
+          <div class="product-card">
             <a href="{{ related_product.url }}">
-              <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title }}" style="width: 100%; border-radius: 4px;">
-              <h4 style="font-size: 0.9rem; margin: 10px 0 5px;">{{ related_product.title }}</h4>
-              <p style="color: var(--clr-maroon); font-weight: 500; margin: 0;">{{ related_product.price | money }}</p>
+              <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 4/5;">
+                <img src="{{ related_product.featured_image | image_url: width: 600 }}" alt="{{ related_product.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+              </div>
+              <h4 style="font-size: 1rem; margin: 15px 0 5px; font-weight: 500;">{{ related_product.title }}</h4>
+              <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">{{ related_product.price | money }}</p>
             </a>
+            <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="quickAddToCart('{{ related_product.variants.first.id }}', this)">Add to Bag</button>
           </div>
         {% endfor %}
       </div>

@@ -38,9 +38,14 @@
     Skip to content
   </a>
 
-  <!-- Announcement Bar -->
+  <!-- Announcement Bar (Rotatable) -->
   <div class="announcement-bar" id="AnnouncementBar">
-    <p>✨ Free shipping on orders above ₹999 &nbsp;|&nbsp; 🌸 New arrivals every Friday &nbsp;|&nbsp; 💛 Handwoven. Handpicked. Heartfelt.</p>
+    <div class="announcement-bar__inner">
+      <div class="announcement-message active">✨ Free shipping on orders above ₹999</div>
+      <div class="announcement-message">🌸 New arrivals every Friday — Shop Now</div>
+      <div class="announcement-message">💛 Handwoven. Handpicked. Heartfelt.</div>
+      <div class="announcement-message">💳 10% Off on your first order! Use: WELCOME10</div>
+    </div>
   </div>
 
   {% section 'header' %}
@@ -56,14 +61,25 @@
     <div class="cart-drawer__overlay" onclick="closeCart()"></div>
     <div class="cart-drawer__inner">
       <div class="cart-drawer__header">
-        <h3>Your Cart</h3>
-        <button class="cart-drawer__close" onclick="closeCart()" aria-label="Close cart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
-        </button>
+        <div class="cart-drawer__header-top">
+          <h3>Your Cart</h3>
+          <button class="cart-drawer__close" onclick="closeCart()" aria-label="Close cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Free Shipping Progress -->
+        <div class="free-shipping-bar" id="FreeShippingBar">
+          <p class="free-shipping-bar__message"></p>
+          <div class="free-shipping-bar__progress">
+            <div class="free-shipping-bar__fill"></div>
+          </div>
+        </div>
       </div>
       <div class="cart-drawer__body" id="CartDrawerBody">
+        <!-- Rendered by Liquid on load / JS on update -->
         {% if cart.item_count == 0 %}
           <div class="cart-empty">
             <div class="cart-empty__icon">🛍️</div>
@@ -112,34 +128,57 @@
     </div>
   </div>
 
-  <!-- Mobile Bottom Nav -->
-  <nav class="mobile-bottom-nav">
-    <a href="/" class="mobile-nav-item">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Home</span>
-    </a>
-    <a href="/collections/all" class="mobile-nav-item">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span>Shop</span>
-    </a>
-    <a href="/pages/search" class="mobile-nav-item">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <span>Search</span>
-    </a>
-    <a href="/cart" class="mobile-nav-item cart-trigger" onclick="event.preventDefault(); openCart()">
-      <div class="cart-icon-wrap">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        {% if cart.item_count > 0 %}
-          <span class="cart-badge">{{ cart.item_count }}</span>
-        {% endif %}
+  <!-- Exit Intent Popup -->
+  <div id="ExitIntentPopup" class="modal-overlay" style="display: none;">
+    <div class="modal-content exit-popup">
+      <button class="modal-close" onclick="closeExitPopup()">&times;</button>
+      <div class="exit-popup__inner">
+        <span class="exit-popup__tag">Wait! Before you go...</span>
+        <h2>Unlock 10% Off</h2>
+        <p>Get an instant discount on your first order when you join our VIP boutique list.</p>
+        <form class="exit-popup__form" onsubmit="event.preventDefault(); showToast('Welcome! Check your email for the code.')">
+          <input type="email" placeholder="Enter your email" required>
+          <button type="submit" class="btn btn--primary btn--full">Get My Discount</button>
+        </form>
+        <p class="exit-popup__fineprint">No thanks, I'll pay full price.</p>
       </div>
-      <span>Cart</span>
-    </a>
-    <a href="/account" class="mobile-nav-item">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Account</span>
-    </a>
-  </nav>
+    </div>
+  <!-- Lightbox Modal -->
+  <div id="LightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="LightboxImg" class="lightbox-modal__img" src="" alt="Zoomed product image">
+  </div>
+
+  <style>
+    /* Free Shipping Bar */
+    .free-shipping-bar { padding: 15px 20px; background: #fafafa; border-bottom: 1px solid #eee; }
+    .free-shipping-bar__message { font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; text-align: center; }
+    .free-shipping-bar__progress { height: 6px; background: #eee; border-radius: 10px; overflow: hidden; }
+    .free-shipping-bar__fill { height: 100%; background: var(--clr-maroon); width: 0; transition: width 0.5s ease; }
+    
+    /* Announcement Bar Rotation */
+    .announcement-bar { overflow: hidden; position: relative; height: 40px; }
+    .announcement-bar__inner { position: relative; height: 100%; }
+    .announcement-message {
+      position: absolute; width: 100%; height: 100%;
+      display: none; align-items: center; justify-content: center;
+      text-align: center; font-size: 0.85rem; letter-spacing: 0.05em;
+    }
+    .announcement-message.active { display: flex; animation: fadeInDown 0.4s ease; }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Exit Popup */
+    .exit-popup { max-width: 450px; text-align: center; padding: 40px 30px; }
+    .exit-popup__tag { color: var(--clr-maroon); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .exit-popup h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin: 15px 0; }
+    .exit-popup p { font-size: 0.95rem; color: #666; margin-bottom: 25px; line-height: 1.5; }
+    .exit-popup__form { display: flex; flex-direction: column; gap: 12px; }
+    .exit-popup__form input { padding: 12px 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+    .exit-popup__fineprint { margin-top: 15px !important; font-size: 0.75rem !important; cursor: pointer; text-decoration: underline; }
+  </style>
 
   <!-- Floating WhatsApp Button -->
   <a href="https://wa.me/919876543210?text=Hello!%20I%20need%20help%20with%20a%20saree%20order." class="floating-wa" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">

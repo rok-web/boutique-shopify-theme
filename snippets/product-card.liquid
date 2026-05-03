@@ -13,7 +13,7 @@
   {% assign discount_pct = compare_at | minus: price | times: 100 | divided_by: compare_at %}
 {% endif %}
 
-<div class="product-card" data-product-id="{{ product.id }}">
+<div class="product-card" data-product-id="{{ product.id }}" data-animate>
 
   <!-- Badges -->
   <div class="product-card__badges">
