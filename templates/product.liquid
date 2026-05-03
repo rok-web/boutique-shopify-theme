@@ -296,27 +296,54 @@
         </div>
 
   <!-- Complete the Look -->
-  {% if product.metafields.custom.complete_the_look %}
-  <div class="complete-the-look" style="padding: 60px 0; background: var(--clr-parchment);">
+  <div class="complete-the-look" style="padding: 80px 0; background: var(--clr-parchment);">
     <div class="container">
-      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 30px; text-align: center;">Complete the Look</h3>
-      <div class="ctl-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
-        {% for related_product in product.metafields.custom.complete_the_look.value %}
-          <div class="product-card">
-            <a href="{{ related_product.url }}">
-              <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 4/5;">
-                <img src="{{ related_product.featured_image | image_url: width: 600 }}" alt="{{ related_product.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-              </div>
-              <h4 style="font-size: 1rem; margin: 15px 0 5px; font-weight: 500;">{{ related_product.title }}</h4>
-              <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">{{ related_product.price | money }}</p>
-            </a>
-            <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="quickAddToCart('{{ related_product.variants.first.id }}', this)">Add to Bag</button>
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 40px; text-align: center;">Complete the Look</h3>
+      <div class="ctl-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+        
+        {% if product.metafields.custom.complete_the_look %}
+          {% for related_product in product.metafields.custom.complete_the_look.value %}
+            <div class="product-card" data-animate>
+              <a href="{{ related_product.url }}">
+                <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+                  <img src="{{ related_product.featured_image | image_url: width: 600 }}" alt="{{ related_product.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                </div>
+                <h4 style="font-size: 1.1rem; margin: 15px 0 5px; font-weight: 500;">{{ related_product.title }}</h4>
+                <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">{{ related_product.price | money }}</p>
+              </a>
+              <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 12px;" onclick="quickAddToCart('{{ related_product.variants.first.id }}', this)">Add to Bag</button>
+            </div>
+          {% endfor %}
+        {% else %}
+          <!-- Default Premium Demo Products -->
+          <div class="product-card" data-animate>
+            <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+              <img src="{{ 'product-kalamkari-saree.png' | asset_url }}" alt="Kalamkari Saree" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h4 style="font-size: 1.1rem; margin: 15px 0 5px; font-weight: 500;">Hand-painted Kalamkari Saree</h4>
+            <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">₹14,499</p>
+            <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 12px;" onclick="showToast('Added to bag!')">Add to Bag</button>
           </div>
-        {% endfor %}
+          <div class="product-card" data-animate>
+            <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+              <img src="{{ 'product-velvet-lehenga.png' | asset_url }}" alt="Velvet Lehenga" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h4 style="font-size: 1.1rem; margin: 15px 0 5px; font-weight: 500;">Velvet Gota Patti Lehenga</h4>
+            <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">₹26,999</p>
+            <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 12px;" onclick="showToast('Added to bag!')">Add to Bag</button>
+          </div>
+          <div class="product-card" data-animate>
+            <div style="position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 3/4;">
+              <img src="{{ 'product-chikankari-kurta.png' | asset_url }}" alt="Chikankari Kurta" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h4 style="font-size: 1.1rem; margin: 15px 0 5px; font-weight: 500;">Lucknowi Chikankari Kurta</h4>
+            <p style="color: var(--clr-maroon); font-weight: 600; margin: 0;">₹8,299</p>
+            <button class="btn btn--primary" style="width: 100%; margin-top: 15px; padding: 12px;" onclick="showToast('Added to bag!')">Add to Bag</button>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
-  {% endif %}
 
   <!-- Recently Viewed -->
   <div class="recently-viewed-section" style="display: none; background: #fafafa; padding: 40px 0;">
