@@ -1,6 +1,8 @@
 {% comment %}Placeholder product card for editor preview{% endcomment %}
-{% assign placeholder_titles = "Kanjivaram Silk Saree,Banarasi Weave,Cotton Linen Saree,Designer Anarkali,Chanderi Suit Set,Pure Mysore Silk,Organza Saree,Georgette Lehenga" | split: "," %}
-{% assign placeholder_prices = "₹4,499,₹6,999,₹2,299,₹3,799,₹4,199,₹8,499,₹3,599,₹12,999" | split: "," %}
+{% assign placeholder_titles = "Kanjivaram Silk Saree|Banarasi Weave|Cotton Linen Saree|Designer Anarkali|Chanderi Suit Set|Pure Mysore Silk|Organza Saree|Georgette Lehenga" | split: "|" %}
+{% assign placeholder_prices = "₹4,499|₹6,999|₹2,299|₹3,799|₹4,199|₹8,499|₹3,599|₹12,999" | split: "|" %}
+{% assign placeholder_images = "kanjivaram_silk_saree.png|banarasi_weave.png|cotton_linen_saree.png|designer_anarkali.png|chanderi_suit_set.png|pure_mysore_silk.png|organza_saree.png|georgette_lehenga.png" | split: "|" %}
+{% assign array_index = index | minus: 1 %}
 
 <div class="product-card product-card--placeholder">
   <button class="wishlist-btn" aria-label="Wishlist">
@@ -9,12 +11,11 @@
 
   <div class="product-card__media">
     <div class="product-card__placeholder-img">
-      {{ index | placeholder_svg_tag: 'product' }}
+      <img src="{{ placeholder_images[array_index] | asset_url }}" alt="{{ placeholder_titles[array_index] }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; aspect-ratio: 3/4; display: block;">
     </div>
   </div>
 
   <div class="product-card__info">
-    {% assign array_index = index | minus: 1 %}
     <h3 class="product-card__title">{{ placeholder_titles[array_index] }}</h3>
     <div class="price-wrapper">
       <span class="price">{{ placeholder_prices[array_index] }}</span>
