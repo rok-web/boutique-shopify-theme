@@ -14,9 +14,10 @@
   </div>
 
   <div class="product-card__info">
-    <h3 class="product-card__title">{{ placeholder_titles[index | minus: 1] }}</h3>
+    {% assign array_index = index | minus: 1 %}
+    <h3 class="product-card__title">{{ placeholder_titles[array_index] }}</h3>
     <div class="price-wrapper">
-      <span class="price">{{ placeholder_prices[index | minus: 1] }}</span>
+      <span class="price">{{ placeholder_prices[array_index] }}</span>
     </div>
   </div>
 </div>
