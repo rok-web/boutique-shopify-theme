@@ -160,7 +160,20 @@ window.closeExitPopup = function() {
   const popup = document.getElementById('ExitIntentPopup');
   if (popup) popup.style.display = 'none';
   sessionStorage.setItem('exit_popup_dismissed', 'true');
+  if (window.exitInterval) clearInterval(window.exitInterval);
 };
+
+function startExitCountdown() {
+  let time = 300; // 5 minutes
+  const display = document.getElementById('QVTimer');
+  if (!display) return;
+  window.exitInterval = setInterval(() => {
+    const mins = Math.floor(time / 60);
+    const secs = time % 60;
+    display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (--time < 0) clearInterval(window.exitInterval);
+  }, 1000);
+}
 
 /* ---- UX POLISH FUNCTIONS ---- */
 
@@ -178,6 +191,90 @@ window.closeLightbox = function() {
   if (modal) modal.style.display = 'none';
   document.body.style.overflow = '';
 };
+
+/* ---- QUICK VIEW ---- */
+
+window.openQuickView = async function(event, handle) {
+  if (event) event.preventDefault();
+  const modal = document.getElementById('QuickViewModal');
+  if (!modal) return;
+
+  // Show placeholder/loading state
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  modal.querySelector('.quick-view-content').classList.add('is-loading');
+
+  try {
+    const res = await fetch(`/products/${handle}.js`);
+    const product = await res.json();
+    
+    document.getElementById('QVTitle').textContent = product.title;
+    document.getElementById('QVPrice').textContent = formatMoney(product.price);
+    const comp = document.getElementById('QVComparePrice');
+    if (product.compare_at_price > product.price) {
+      comp.textContent = formatMoney(product.compare_at_price);
+      comp.style.display = 'inline';
+    } else {
+      comp.style.display = 'none';
+    }
+    
+    document.getElementById('QVMainImg').src = product.featured_image;
+    document.getElementById('QVDescription').innerHTML = product.description;
+    document.getElementById('QVFullDetails').href = product.url;
+    document.getElementById('QVVariantId').value = product.variants[0].id;
+    
+    // Render Options
+    const optionsContainer = document.getElementById('QVOptions');
+    optionsContainer.innerHTML = '';
+    if (product.variants.length > 1 && product.options) {
+      product.options.forEach((opt, index) => {
+        const group = document.createElement('div');
+        group.className = 'option-group';
+        group.innerHTML = `<label>${opt.name}</label><div class="option-btns"></div>`;
+        const btns = group.querySelector('.option-btns');
+        opt.values.forEach(val => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `option-btn ${product.variants[0].options[index] === val ? 'active' : ''}`;
+          btn.textContent = val;
+          btn.onclick = () => {
+            btns.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateQVVariant(product);
+          };
+          btns.appendChild(btn);
+        });
+        optionsContainer.appendChild(group);
+      });
+    }
+
+    modal.querySelector('.quick-view-content').classList.remove('is-loading');
+  } catch (err) {
+    console.error('Quick View Error:', err);
+    closeQuickView();
+  }
+};
+
+window.closeQuickView = function() {
+  const modal = document.getElementById('QuickViewModal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+function updateQVVariant(product) {
+  const selectedOptions = Array.from(document.querySelectorAll('#QVOptions .option-btn.active')).map(b => b.textContent);
+  const variant = product.variants.find(v => v.options.every((opt, i) => opt === selectedOptions[i]));
+  if (variant) {
+    document.getElementById('QVVariantId').value = variant.id;
+    document.getElementById('QVPrice').textContent = formatMoney(variant.price);
+    const atc = document.querySelector('.qv-atc-btn');
+    if (atc) {
+      atc.disabled = !variant.available;
+      atc.textContent = variant.available ? 'Add to Bag' : 'Sold Out';
+    }
+    if (variant.featured_image) document.getElementById('QVMainImg').src = variant.featured_image.src;
+  }
+}
 
 /* ---- HELPERS ---- */
 
@@ -356,21 +453,23 @@ function initQtySelector() {
 }
 
 function initProductForm() {
-  const form = document.getElementById('ProductForm');
-  if (!form) return;
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    const btn = form.querySelector('.atc-btn');
-    const original = btn.innerHTML;
-    btn.disabled = true; btn.innerHTML = 'Adding...';
-    try {
-      const res = await fetch('/cart/add.js', { method: 'POST', body: new FormData(form) });
-      if (!res.ok) throw new Error();
-      await updateCartDrawer(); window.openCart();
-      btn.innerHTML = '✓ Added!';
-      setTimeout(() => { btn.disabled = false; btn.innerHTML = original; }, 2000);
-    } catch (err) { btn.disabled = false; btn.innerHTML = 'Error'; }
-  };
+  const forms = document.querySelectorAll('#ProductForm, #QVForm');
+  forms.forEach(form => {
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.atc-btn, .qv-atc-btn');
+      const original = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = 'Adding...';
+      try {
+        const res = await fetch('/cart/add.js', { method: 'POST', body: new FormData(form) });
+        if (!res.ok) throw new Error();
+        await updateCartDrawer(); window.openCart();
+        if (form.id === 'QVForm') closeQuickView();
+        btn.innerHTML = '✓ Added!';
+        setTimeout(() => { btn.disabled = false; btn.innerHTML = original; }, 2000);
+      } catch (err) { btn.disabled = false; btn.innerHTML = 'Error'; }
+    };
+  });
 }
 
 function initAnnouncementRotation() {
@@ -391,7 +490,10 @@ function initExitIntent() {
   document.addEventListener('mouseleave', (e) => {
     if (e.clientY < 0) {
       const popup = document.getElementById('ExitIntentPopup');
-      if (popup) popup.style.display = 'flex';
+      if (popup && popup.style.display === 'none') {
+        popup.style.display = 'flex';
+        startExitCountdown();
+      }
     }
   });
 }
@@ -423,7 +525,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.getElementById('SiteHeader');
   if (header) {
     window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 40);
+      const scrolled = window.scrollY > 40;
+      header.classList.toggle('scrolled', scrolled);
+      
+      // Back to Top visibility
+      const btt = document.getElementById('BackToTop');
+      if (btt) btt.classList.toggle('visible', window.scrollY > 500);
     }, { passive: true });
   }
 

@@ -133,16 +133,22 @@
     <div class="modal-content exit-popup">
       <button class="modal-close" onclick="closeExitPopup()">&times;</button>
       <div class="exit-popup__inner">
-        <span class="exit-popup__tag">Wait! Before you go...</span>
-        <h2>Unlock 10% Off</h2>
-        <p>Get an instant discount on your first order when you join our VIP boutique list.</p>
-        <form class="exit-popup__form" onsubmit="event.preventDefault(); showToast('Welcome! Check your email for the code.')">
-          <input type="email" placeholder="Enter your email" required>
-          <button type="submit" class="btn btn--primary btn--full">Get My Discount</button>
+        <span class="exit-popup__tag">Exclusive Offer</span>
+        <h2>Wait! Your 10% Discount is Waiting</h2>
+        <p>Join 50,000+ elegant women who receive our exclusive heritage collection updates and special offers.</p>
+        <div class="exit-popup__countdown" id="ExitCountdown">Offer expires in <span id="QVTimer">05:00</span></div>
+        <form class="exit-popup__form" onsubmit="event.preventDefault(); showToast('Welcome! Your code VASTHRA10 has been activated.')">
+          <input type="email" placeholder="Your best email address" required>
+          <button type="submit" class="btn btn--primary btn--full">Claim My 10% Off</button>
         </form>
-        <p class="exit-popup__fineprint">No thanks, I'll pay full price.</p>
+        <p class="exit-popup__fineprint" onclick="closeExitPopup()">No thanks, I'll pay full price.</p>
       </div>
     </div>
+  </div>
+
+  {% render 'recent-sales' %}
+  {% render 'quick-view' %}
+
   <!-- Lightbox Modal -->
   <div id="LightboxModal" class="lightbox-modal" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
@@ -260,6 +266,11 @@
       }
     }
   </style>
+
+  <!-- Back to Top Button -->
+  <button id="BackToTop" class="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
 
   <script src="{{ 'script.js' | asset_url }}" defer></script>
 </body>

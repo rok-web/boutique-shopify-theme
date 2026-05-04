@@ -1,0 +1,124 @@
+<div id="RecentSales" class="recent-sales-toast" style="display: none;">
+  <div class="rs-image">
+    <img id="RSImg" src="" alt="">
+  </div>
+  <div class="rs-content">
+    <p class="rs-text"><span id="RSName"></span> from <span id="RSCity"></span> just bought <strong id="RSProduct"></strong></p>
+    <span class="rs-time" id="RSTime">2 minutes ago</span>
+  </div>
+  <button class="rs-close" onclick="this.parentElement.style.display='none'">&times;</button>
+</div>
+
+<style>
+.recent-sales-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  background: var(--clr-white);
+  padding: 12px 20px 12px 12px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 950;
+  max-width: 320px;
+  border: 1px solid var(--clr-border);
+  animation: slideInUp 0.5s ease forwards;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rs-image {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.rs-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rs-content {
+  flex: 1;
+}
+
+.rs-text {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--clr-ink);
+}
+
+.rs-time {
+  font-size: 0.7rem;
+  color: var(--clr-ink-muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.rs-close {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  font-size: 1rem;
+  color: #ccc;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .recent-sales-toast {
+    display: none !important; /* Hide on mobile to avoid clutter */
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const rsData = {
+    names: ['Ananya', 'Priya', 'Meera', 'Sneha', 'Riya', 'Kavita', 'Aditi'],
+    cities: ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kolkata'],
+    products: [
+      { title: 'Banarasi Silk Saree', img: '{{ "banarasi_weave.png" | asset_url }}' },
+      { title: 'Kanjivaram Saree', img: '{{ "kanjivaram_silk_saree.png" | asset_url }}' },
+      { title: 'Chikankari Kurta', img: '{{ "product-chikankari-kurta.png" | asset_url }}' },
+      { title: 'Organza Saree', img: '{{ "organza_saree.png" | asset_url }}' },
+      { title: 'Velvet Lehenga', img: '{{ "product-velvet-lehenga.png" | asset_url }}' }
+    ]
+  };
+
+  function showRecentSale() {
+    const toast = document.getElementById('RecentSales');
+    if (!toast) return;
+
+    const name = rsData.names[Math.floor(Math.random() * rsData.names.length)];
+    const city = rsData.cities[Math.floor(Math.random() * rsData.cities.length)];
+    const product = rsData.products[Math.floor(Math.random() * rsData.products.length)];
+    const time = Math.floor(Math.random() * 10) + 1;
+
+    document.getElementById('RSName').textContent = name;
+    document.getElementById('RSCity').textContent = city;
+    document.getElementById('RSProduct').textContent = product.title;
+    document.getElementById('RSImg').src = product.img;
+    document.getElementById('RSTime').textContent = `${time} minutes ago`;
+
+    toast.style.display = 'flex';
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => { toast.style.display = 'none'; toast.style.opacity = '1'; }, 500);
+    }, 6000);
+  }
+
+  // Initial delay
+  setTimeout(showRecentSale, 10000);
+  // Repeat every 25 seconds
+  setInterval(showRecentSale, 25000);
+});
+</script>
