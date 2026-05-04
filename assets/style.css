@@ -2824,3 +2824,113 @@ ol {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+/* ============================================================
+   PHASE 2: ADVANCED UX
+   ============================================================ */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--clr-cream); }
+::-webkit-scrollbar-thumb { background: var(--clr-blush); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-rose); }
+
+/* Mega Menu */
+.nav-dropdown--mega {
+  width: 100vw;
+  left: calc(-1 * (100vw - 100%) / 2);
+  right: auto;
+  padding: 40px 0;
+  border-radius: 0;
+  border-left: none; border-right: none;
+}
+
+.mega-menu__container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) 300px;
+  gap: 40px;
+}
+
+.mega-menu__col-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--clr-maroon);
+  margin-bottom: 20px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.mega-menu__link {
+  display: block;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--clr-ink-light);
+  transition: color var(--transition);
+}
+
+.mega-menu__link:hover { color: var(--clr-terracotta); }
+
+.mega-menu__promo {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+
+.mega-menu__promo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.mega-menu__promo:hover img { transform: scale(1.05); }
+
+.mega-menu__promo-content {
+  position: absolute; bottom: 20px; left: 20px; color: #fff;
+}
+
+/* Shimmer Animation */
+.shimmer {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 100%;
+  display: inline-block;
+  position: relative;
+  animation: shimmerAnimation 1.5s linear infinite forwards;
+}
+
+@keyframes shimmerAnimation {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+/* Magnetic Button Effect (Simulated with transition) */
+.btn--magnetic {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.btn--magnetic:hover {
+  transform: translate(var(--mx, 0), var(--my, 0));
+}
+
+/* Luxe Grain Overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png');
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: multiply;
+}
+
+/* Magnetic Buttons Utility */
+.btn--magnetic {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-block;
+}

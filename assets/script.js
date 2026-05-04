@@ -383,6 +383,23 @@ function renderCartItemsUI(cart) {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>`).join('');
+
+  // Phase 2: Add Cart Upsells
+  const upsellSection = document.createElement('div');
+  upsellSection.className = 'cart-drawer__upsells';
+  upsellSection.innerHTML = `
+    <h4>Complete the Look</h4>
+    <div class="cart-upsell-list">
+      <div class="cart-upsell-item">
+        <img src="/assets/product-kalamkari-saree.png" style="width:40px;height:50px;object-fit:cover;border-radius:4px;" alt="Cross sell">
+        <div class="cart-upsell-details">
+          <span>Banarasi Silk Blouse Piece</span>
+          <button class="btn btn--outline btn--sm" onclick="showToast('Added to bag!')">Add ₹1,200</button>
+        </div>
+      </div>
+    </div>
+  `;
+  body.appendChild(upsellSection);
 }
 
 /* ---- INITIALIZERS ---- */
@@ -599,4 +616,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const banner = document.getElementById('CookieConsent');
     if (banner) banner.style.display = 'flex';
   }
+
+  // Magnetic Buttons
+  document.querySelectorAll('.btn--magnetic').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      btn.style.setProperty('--mx', `${x * 0.3}px`);
+      btn.style.setProperty('--my', `${y * 0.3}px`);
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.setProperty('--mx', '0px');
+      btn.style.setProperty('--my', '0px');
+    });
+  });
 });
