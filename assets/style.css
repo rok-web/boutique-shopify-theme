@@ -3408,13 +3408,49 @@ body.search-open::after {
 .float-btn--order {
   padding: 0 25px;
   height: 56px;
-  background-color: var(--clr-maroon);
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
   color: #fff;
   font-weight: 700;
   font-size: 0.9rem;
   gap: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+  border: none;
+}
+
+.float-btn--order::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: rotate(45deg);
+  animation: luxe-shine 3s infinite;
+}
+
+@keyframes luxe-shine {
+  0% { left: -100%; top: -100%; }
+  20% { left: 100%; top: 100%; }
+  100% { left: 100%; top: 100%; }
+}
+
+.product-card__order-now {
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+  color: #fff;
+}
+
+.order-now-btn {
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
+}
+
+.order-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(211, 84, 0, 0.4);
 }
 
 .float-btn:hover {
