@@ -9,10 +9,10 @@
   --clr-parchment: #f5ede3;
   --clr-blush: #e8d5c4;
   --clr-rose: #c9846a;
-  --clr-terracotta: #b5614a;
-  --clr-maroon: #7a2e2e;
-  --clr-gold: #c9a84c;
-  --clr-gold-light: #e8d48f;
+  --clr-terracotta: #0d9488;
+  --clr-maroon: #064e3b;
+  --clr-gold: #d4af37;
+  --clr-gold-light: #f3e5ab;
   --clr-ink: #1e1410;
   --clr-ink-light: #4a3728;
   --clr-ink-muted: #8a7060;
@@ -547,7 +547,8 @@ ol {
 .btn--primary {
   background: var(--clr-maroon);
   color: var(--clr-white);
-  border-color: var(--clr-maroon);
+  border-color: var(--clr-gold);
+  box-shadow: 0 4px 15px rgba(6, 78, 59, 0.2);
 }
 
 .btn--primary:hover {
@@ -645,9 +646,9 @@ ol {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top,
-      rgba(20, 10, 5, .72) 0%,
-      rgba(20, 10, 5, .3) 50%,
-      rgba(20, 10, 5, .05) 100%);
+      rgba(6, 78, 59, .8) 0%,
+      rgba(6, 78, 59, .3) 50%,
+      rgba(6, 78, 59, .05) 100%);
 }
 
 .hero-content {
