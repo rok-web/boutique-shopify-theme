@@ -154,6 +154,52 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
+/* Floating Actions (Mobile) */
+.floating-actions-container {
+  position: fixed;
+  bottom: 80px; /* Above mobile nav */
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 950;
+  pointer-events: none;
+}
+
+@media (min-width: 769px) {
+  .floating-actions-container { display: none; }
+}
+
+.float-btn {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.float-btn--order-now {
+  background: var(--clr-gold);
+  color: var(--clr-maroon);
+}
+
+.float-btn--whatsapp-luxe {
+  background: #25d366;
+  color: #fff;
+  padding: 12px; /* Just icon on mobile maybe? No, let's keep it consistent */
+}
+
+.float-btn:hover {
+  transform: translateY(-5px);
+}
+
 .back-to-top:hover {
   background: var(--clr-maroon);
   color: var(--clr-white);
