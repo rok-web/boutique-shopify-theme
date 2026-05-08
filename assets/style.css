@@ -1354,6 +1354,36 @@ ol {
   color: var(--clr-ink-muted);
   max-width: 600px;
   margin: 0 auto 12px;
+  line-height: 1.6;
+}
+
+.empty-collection-container {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.empty-collection-notice {
+  margin-bottom: 60px;
+}
+
+.empty-collection-notice h3 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 12px;
+}
+
+.empty-collection-notice p {
+  color: var(--clr-ink-muted);
+  font-size: 1.1rem;
+}
+
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+  width: 100%;
 }
 
 .collection-count {
