@@ -42,8 +42,10 @@
   <div class="header-inner">
 
     <!-- Hamburger (mobile) -->
-    <button class="hamburger" id="HamburgerBtn" aria-label="Open menu" onclick="toggleMobileMenu()">
-      <span></span><span></span><span></span>
+    <button class="hamburger" id="HamburgerBtn" aria-label="Menu" onclick="toggleMobileMenu()">
+      <div class="hamburger-box">
+        <div class="hamburger-inner"></div>
+      </div>
     </button>
 
     <!-- Logo -->
@@ -153,7 +155,9 @@
       <div class="mobile-menu__header">
         <span class="logo-text">{{ section.settings.logo_text }}</span>
         <button class="mobile-menu__close" onclick="toggleMobileMenu()" aria-label="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <div class="hamburger-box is-active">
+            <div class="hamburger-inner"></div>
+          </div>
         </button>
       </div>
 

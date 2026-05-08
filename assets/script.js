@@ -32,8 +32,10 @@ window.toggleSearch = function() {
 
 window.toggleMobileMenu = function() {
   const menu = document.getElementById('MobileMenu');
+  const header = document.getElementById('SiteHeader');
   if (!menu) return;
   const isOpen = menu.classList.toggle('open');
+  if (header) header.classList.toggle('menu-open', isOpen);
   document.body.style.overflow = isOpen ? 'hidden' : '';
 };
 
