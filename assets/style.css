@@ -794,22 +794,24 @@ ol {
 
 .hero-slider-track {
   display: flex;
-  width: 300%;
+  width: 500%;
   height: 100%;
-  animation: heroSlide 16s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  animation: heroSlide 32s cubic-bezier(0.7, 0, 0.3, 1) infinite;
 }
 
 .hero-slider-img {
-  width: 33.333%;
+  width: 20%;
   height: 100%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 @keyframes heroSlide {
-  0%, 45% { transform: translateX(0); }
-  50%, 95% { transform: translateX(-33.333%); }
-  100% { transform: translateX(-66.666%); }
+  0%, 20% { transform: translateX(0); }
+  25%, 45% { transform: translateX(-20%); }
+  50%, 70% { transform: translateX(-40%); }
+  75%, 95% { transform: translateX(-60%); }
+  100% { transform: translateX(-80%); }
 }
 
 /* ============================================================
