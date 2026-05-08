@@ -3312,3 +3312,55 @@ body.search-open::after {
     display: none;
   }
 }
+
+/* Order Now Button Styles */
+.product-card__actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+  z-index: 10;
+}
+
+.product-card:hover .product-card__actions {
+  transform: translateY(0);
+}
+
+.product-card__quick-add,
+.product-card__order-now {
+  flex: 1;
+  padding: 14px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.product-card__quick-add {
+  background: var(--clr-ink);
+  color: #fff;
+}
+
+.product-card__order-now {
+  background: var(--clr-maroon);
+  color: #fff;
+}
+
+.product-card__quick-add:hover { background: #333; }
+.product-card__order-now:hover { background: #9b3b3b; }
+
+.order-now-btn {
+  border-color: var(--clr-maroon);
+  color: var(--clr-maroon);
+  margin-top: 10px;
+}
+.order-now-btn:hover {
+  background: var(--clr-maroon);
+  color: #fff;
+}

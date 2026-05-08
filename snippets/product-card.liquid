@@ -73,20 +73,27 @@
   </a>
 
   <!-- Quick Add -->
-  {% if product.available %}
     {% if product.variants.size == 1 and product.variants.first.title == 'Default Title' %}
-      <button
-        class="product-card__quick-add"
-        onclick="quickAddToCart('{{ product.variants.first.id }}', this)"
-        aria-label="Add to cart">
-        Add to Bag
-      </button>
+      <div class="product-card__actions">
+        <button
+          class="product-card__quick-add"
+          onclick="quickAddToCart('{{ product.variants.first.id }}', this)"
+          aria-label="Add to cart">
+          Add to Bag
+        </button>
+        <button
+          class="product-card__order-now"
+          onclick="orderNow('{{ product.variants.first.id }}')"
+          aria-label="Order now">
+          Order Now
+        </button>
+      </div>
     {% else %}
       <a href="{{ product.url }}" class="product-card__quick-add">
         Select Options
       </a>
     {% endif %}
-  {% endif %}
+{% endif %}
 
   <!-- Product Info -->
   <div class="product-card__info">

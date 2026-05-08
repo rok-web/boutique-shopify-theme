@@ -229,6 +229,15 @@
               {% endif %}
             </button>
 
+            <!-- Order Now Button -->
+            <button
+              type="button"
+              class="btn btn--outline order-now-btn"
+              onclick="orderNow('{{ current_variant.id }}')"
+              {% unless current_variant.available %}style="display:none"{% endunless %}>
+              Order Now
+            </button>
+
             <!-- Wishlist -->
             <button
               type="button"

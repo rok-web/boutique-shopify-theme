@@ -123,6 +123,21 @@ window.quickAddToCart = async function(variantId, btn) {
   }
 };
 
+window.orderNow = async function(variantId) {
+  if (!variantId) return;
+  showToast('Preparing your order...', 'info');
+  try {
+    await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    });
+    window.location.href = '/checkout';
+  } catch (err) {
+    window.location.href = '/checkout';
+  }
+};
+
 window.toggleWishlist = function(btn, productId) {
   let wishlist = [];
   try { wishlist = JSON.parse(localStorage.getItem('boutique_wishlist') || '[]'); } catch(e) {}
