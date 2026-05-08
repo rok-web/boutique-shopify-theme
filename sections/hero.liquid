@@ -94,7 +94,7 @@
     {% endif %}
 
     {% if section.settings.heading != blank %}
-      <h1 class="hero-heading" data-animate>{{ section.settings.heading | newline_to_br }}</h1>
+      <h1 class="hero-heading" data-animate><span>{{ section.settings.heading | newline_to_br }}</span></h1>
     {% endif %}
 
     {% if section.settings.subheading != blank %}
