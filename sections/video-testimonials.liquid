@@ -88,6 +88,9 @@
           {% endif %}
 
           <div class="video-card" {{ block.shopify_attributes }} onclick="openVideoPlayer('{{ video_src }}')">
+            <div class="video-card__top-text">
+              Real Frillve <span class="highlight">Success Story</span>
+            </div>
             <div class="video-card__media">
               {% if block.settings.thumbnail %}
                 <img src="{{ block.settings.thumbnail | image_url: width: 400 }}" alt="{{ block.settings.customer_name }}" loading="lazy">
@@ -198,35 +201,63 @@ function closeVideoPlayer() {
 .video-card {
   flex: 0 0 280px;
   scroll-snap-align: start;
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   overflow: hidden;
   background: var(--clr-emerald);
-  padding: 4px;
+  padding: 12px; /* Thick emerald frame */
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(6, 78, 59, 0.15);
 }
 
 .video-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(6, 78, 59, 0.25);
+}
+
+.video-card__top-text {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+  padding: 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-card__top-text .highlight {
+  color: #FFD700; /* Gold highlight like screenshot */
 }
 
 .video-card__media {
   position: relative;
-  aspect-ratio: 9/16;
-  border-radius: calc(var(--radius-lg) - 4px);
+  aspect-ratio: 9/14; /* Adjusted for the frame */
+  border-radius: 16px;
   overflow: hidden;
+  background: #000;
 }
 
 .video-card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.video-card:hover .video-card__media img {
+  transform: scale(1.1);
 }
 
 .video-card__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -234,27 +265,36 @@ function closeVideoPlayer() {
 }
 
 .video-play-btn {
-  width: 60px;
-  height: 60px;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(10px);
+  width: 54px;
+  height: 54px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.4);
+  transition: all 0.3s ease;
+}
+
+.video-card:hover .video-play-btn {
+  background: var(--clr-gold);
+  border-color: var(--clr-gold);
+  color: var(--clr-maroon);
+  transform: scale(1.15);
 }
 
 .video-card__caption {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
   color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 /* Video Modal */
