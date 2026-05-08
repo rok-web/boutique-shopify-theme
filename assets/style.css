@@ -3304,12 +3304,21 @@ body.search-open::after {
 
 @media (max-width: 768px) {
   .whatsapp-float {
-    bottom: 80px; /* Above bottom nav */
+    bottom: 90px; /* Above mobile nav */
     right: 20px;
-    padding: 12px;
+    padding: 0;
+    width: 54px;
+    height: 54px;
+    justify-content: center;
+    border-radius: 50%;
   }
   .whatsapp-float span {
     display: none;
+  }
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+    margin: 0;
   }
 }
 
