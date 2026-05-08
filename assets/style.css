@@ -617,6 +617,21 @@ ol {
   font-size: .9rem;
 }
 
+.btn--order {
+  background: var(--clr-gold);
+  color: var(--clr-maroon);
+  border-color: var(--clr-gold);
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn--order:hover {
+  background: var(--clr-gold-light);
+  border-color: var(--clr-gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
 /* ============================================================
    HERO SECTION
    ============================================================ */

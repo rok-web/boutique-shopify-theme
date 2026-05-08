@@ -232,7 +232,7 @@
             <!-- Order Now Button -->
             <button
               type="button"
-              class="btn btn--outline order-now-btn"
+              class="btn btn--order order-now-btn"
               onclick="orderNow('{{ current_variant.id }}')"
               {% unless current_variant.available %}style="display:none"{% endunless %}>
               Order Now
@@ -374,7 +374,7 @@
       <button class="btn btn--primary sticky-atc__btn" onclick="document.querySelector('#ProductForm').dispatchEvent(new Event('submit'))" {% unless current_variant.available %}disabled{% endunless %} style="padding: 10px 15px; font-size: 0.85rem; flex: 1;">
         {% if current_variant.available %}Add to Bag{% else %}Sold Out{% endif %}
       </button>
-      <button class="btn btn--maroon sticky-atc__order-btn" onclick="orderNow('{{ current_variant.id }}')" {% unless current_variant.available %}style="display:none"{% endunless %} style="padding: 10px 15px; font-size: 0.85rem; flex: 1; background: var(--clr-maroon); color: #fff; border: none;">
+      <button class="btn btn--order sticky-atc__order-btn" onclick="orderNow('{{ current_variant.id }}')" {% unless current_variant.available %}style="display:none"{% endunless %} style="padding: 10px 15px; font-size: 0.85rem; flex: 1;">
         Order Now
       </button>
     </div>
