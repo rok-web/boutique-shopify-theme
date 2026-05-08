@@ -26,6 +26,7 @@ window.toggleSearch = function() {
   const bar = document.getElementById('SearchBar');
   if (!bar) return;
   const isOpen = bar.classList.toggle('open');
+  document.body.classList.toggle('search-open', isOpen);
   if (isOpen) bar.querySelector('input')?.focus();
 };
 
@@ -527,6 +528,64 @@ function initAnimations() {
   document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 }
 
+function initCursor() {
+  if (window.innerWidth <= 1024) return;
+  const dot = document.getElementById('CursorDot');
+  const outline = document.getElementById('CursorOutline');
+  if (!dot || !outline) return;
+
+  let mouseX = 0, mouseY = 0;
+  let dotX = 0, dotY = 0;
+  let outlineX = 0, outlineY = 0;
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  const animate = () => {
+    dotX += (mouseX - dotX) * 0.2;
+    dotY += (mouseY - dotY) * 0.2;
+    dot.style.transform = `translate3d(${dotX - 4}px, ${dotY - 4}px, 0)`;
+
+    outlineX += (mouseX - outlineX) * 0.1;
+    outlineY += (mouseY - outlineY) * 0.1;
+    outline.style.transform = `translate3d(${outlineX - 20}px, ${outlineY - 20}px, 0)`;
+
+    requestAnimationFrame(animate);
+  };
+  animate();
+
+  document.body.classList.add('custom-cursor-active');
+
+  const hovers = 'a, button, .category-card, .product-card, .wishlist-btn, .header-icon';
+  document.querySelectorAll(hovers).forEach(el => {
+    el.addEventListener('mouseenter', () => outline.classList.add('hover'));
+    el.addEventListener('mouseleave', () => outline.classList.remove('hover'));
+  });
+}
+
+function initScrollProgress() {
+  const bar = document.getElementById('ScrollProgress');
+  if (!bar) return;
+  window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    bar.style.width = scrolled + "%";
+  }, { passive: true });
+}
+
+function initPageTransition() {
+  const overlay = document.getElementById('PageTransition');
+  if (!overlay) return;
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      overlay.classList.add('loaded');
+    }, 300);
+  });
+}
+
 /* ---- DOM READY ---- */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -537,6 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initAnnouncementRotation();
   initExitIntent();
   initAnimations();
+  initCursor();
+  initScrollProgress();
+  initPageTransition();
   
   // Sticky & Shrinking Header
   const header = document.getElementById('SiteHeader');
