@@ -96,10 +96,40 @@
             "customer_name": "Happy Parent",
             "caption": "Amazing Quality!"
           }
+        },
+        "video_card_gpkXxg": {
+          "type": "video_card",
+          "settings": {
+            "video_url": "",
+            "video_file_url": "",
+            "customer_name": "Happy Parent",
+            "caption": "Amazing Quality!"
+          }
+        },
+        "video_card_eQRMPp": {
+          "type": "video_card",
+          "settings": {
+            "video_url": "",
+            "video_file_url": "",
+            "customer_name": "Happy Parent",
+            "caption": "Amazing Quality!"
+          }
+        },
+        "video_card_Haa43R": {
+          "type": "video_card",
+          "settings": {
+            "video_url": "",
+            "video_file_url": "",
+            "customer_name": "Happy Parent",
+            "caption": "Amazing Quality!"
+          }
         }
       },
       "block_order": [
-        "video_card_rRG4hK"
+        "video_card_rRG4hK",
+        "video_card_gpkXxg",
+        "video_card_eQRMPp",
+        "video_card_Haa43R"
       ],
       "settings": {
         "title": "Real Frillve Moments",
