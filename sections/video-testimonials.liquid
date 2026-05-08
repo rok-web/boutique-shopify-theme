@@ -26,6 +26,18 @@
           "label": "Video Thumbnail"
         },
         {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video Link (YouTube/Vimeo)",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "text",
+          "id": "video_file_url",
+          "label": "Native Video URL (e.g. Shopify File Link)",
+          "info": "Upload a video to Shopify Files and paste the link here for a cleaner look."
+        },
+        {
           "type": "text",
           "id": "customer_name",
           "label": "Customer Name",
@@ -64,7 +76,18 @@
     <div class="video-slider-container">
       <div class="video-slider" id="VideoSlider">
         {% for block in section.blocks %}
-          <div class="video-card" {{ block.shopify_attributes }}>
+          {% assign video_src = "" %}
+          {% if block.settings.video_file_url != blank %}
+            {% assign video_src = block.settings.video_file_url %}
+          {% elsif block.settings.video_url != blank %}
+            {% if block.settings.video_url.type == 'youtube' %}
+              {% assign video_src = "https://www.youtube.com/embed/" | append: block.settings.video_url.id %}
+            {% else %}
+              {% assign video_src = "https://player.vimeo.com/video/" | append: block.settings.video_url.id %}
+            {% endif %}
+          {% endif %}
+
+          <div class="video-card" {{ block.shopify_attributes }} onclick="openVideoPlayer('{{ video_src }}')">
             <div class="video-card__media">
               {% if block.settings.thumbnail %}
                 <img src="{{ block.settings.thumbnail | image_url: width: 400 }}" alt="{{ block.settings.customer_name }}" loading="lazy">
@@ -83,9 +106,6 @@
                 {% endif %}
               </div>
             </div>
-            <div class="video-card__info">
-              <span class="video-card__name">{{ block.settings.customer_name }}</span>
-            </div>
           </div>
         {% endfor %}
       </div>
@@ -100,6 +120,16 @@
       </div>
     </div>
   </div>
+
+  <!-- Video Player Modal -->
+  <div id="VideoPlayerModal" class="video-modal" onclick="closeVideoPlayer()">
+    <div class="video-modal__content" onclick="event.stopPropagation()">
+      <button class="video-modal__close" onclick="closeVideoPlayer()">&times;</button>
+      <div class="video-modal__container" id="VideoContainer">
+        <!-- Video iframe or video tag inserted here -->
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -110,6 +140,33 @@ function scrollVideoSlider(direction) {
     left: direction * scrollAmount,
     behavior: 'smooth'
   });
+}
+
+function openVideoPlayer(src) {
+  if (!src) {
+    showToast('Demo video: Functionality active. Please add a video link in theme settings.', 'info');
+    return;
+  }
+  
+  const modal = document.getElementById('VideoPlayerModal');
+  const container = document.getElementById('VideoContainer');
+  
+  if (src.includes('youtube.com') || src.includes('vimeo.com')) {
+    container.innerHTML = `<iframe src="${src}?autoplay=1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  } else {
+    container.innerHTML = `<video src="${src}" controls autoplay style="width:100%; height:100%;"></video>`;
+  }
+  
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoPlayer() {
+  const modal = document.getElementById('VideoPlayerModal');
+  const container = document.getElementById('VideoContainer');
+  modal.classList.remove('active');
+  container.innerHTML = '';
+  document.body.style.overflow = '';
 }
 </script>
 
@@ -131,7 +188,7 @@ function scrollVideoSlider(direction) {
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-bottom: 20px;
+  padding: 0 20px 20px;
 }
 
 .video-slider::-webkit-scrollbar {
@@ -144,7 +201,13 @@ function scrollVideoSlider(direction) {
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--clr-emerald);
-  padding: 4px; /* Green border effect like screenshot */
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
 }
 
 .video-card__media {
@@ -158,11 +221,6 @@ function scrollVideoSlider(direction) {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.video-card:hover .video-card__media img {
-  transform: scale(1.05);
 }
 
 .video-card__overlay {
@@ -178,19 +236,14 @@ function scrollVideoSlider(direction) {
 .video-play-btn {
   width: 60px;
   height: 60px;
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  border: 2px solid #fff;
-  transition: transform 0.3s ease;
-}
-
-.video-card:hover .video-play-btn {
-  transform: scale(1.1);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 
 .video-card__caption {
@@ -204,39 +257,58 @@ function scrollVideoSlider(direction) {
   text-align: center;
 }
 
-.video-card__info {
-  padding: 12px;
-  text-align: center;
-  display: none; /* Keep it clean like screenshot */
-}
-
-.slider-controls {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 30px;
-}
-
-.slider-arrow {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--clr-border);
+/* Video Modal */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  opacity: 0;
+  visibility: hidden;
   transition: all 0.3s ease;
 }
 
-.slider-arrow:hover {
-  background: var(--clr-emerald);
+.video-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-modal__content {
+  width: 90%;
+  max-width: 450px;
+  aspect-ratio: 9/16;
+  position: relative;
+}
+
+.video-modal__container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.video-modal__container iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.video-modal__close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
   color: #fff;
-  border-color: var(--clr-emerald);
+  font-size: 2.5rem;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
   .video-card { flex: 0 0 220px; }
-  .video-testimonials { padding: 50px 0; }
 }
 </style>
+
