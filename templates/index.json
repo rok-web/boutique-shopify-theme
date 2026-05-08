@@ -31,6 +31,14 @@
     "featured-categories": {
       "type": "featured-categories",
       "blocks": {
+        "cat4": {
+          "type": "category",
+          "settings": {
+            "title": "Kids Wear",
+            "subtitle": "New Collection",
+            "url": "/collections/kids-wear"
+          }
+        },
         "cat1": {
           "type": "category",
           "settings": {
@@ -54,14 +62,6 @@
             "subtitle": "For every occasion",
             "url": "/collections/lehenga"
           }
-        },
-        "cat4": {
-          "type": "category",
-          "settings": {
-            "title": "Kids Wear",
-            "subtitle": "New Collection",
-            "url": "/collections/kids-wear"
-          }
         }
       },
       "block_order": [
@@ -83,6 +83,27 @@
         "products_to_show": 8,
         "view_all_text": "View All",
         "view_all_url": "/collections/all"
+      }
+    },
+    "video-testimonials": {
+      "type": "video-testimonials",
+      "blocks": {
+        "video_card_rRG4hK": {
+          "type": "video_card",
+          "settings": {
+            "video_url": "",
+            "video_file_url": "",
+            "customer_name": "Happy Parent",
+            "caption": "Amazing Quality!"
+          }
+        }
+      },
+      "block_order": [
+        "video_card_rRG4hK"
+      ],
+      "settings": {
+        "title": "Real Frillve Moments",
+        "subtitle": "Watch our Little Princesses in action"
       }
     },
     "testimonials": {
@@ -137,13 +158,6 @@
       ],
       "settings": {
         "title": "What Our Customers Say"
-      }
-    },
-    "video-testimonials": {
-      "type": "video-testimonials",
-      "settings": {
-        "title": "Real Frillve Moments",
-        "subtitle": "Watch our Little Princesses in action"
       }
     }
   },
