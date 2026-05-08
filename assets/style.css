@@ -137,6 +137,23 @@ body {
   transform: translateY(0);
 }
 
+/* Category Badge */
+.category-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--clr-gold);
+  color: var(--clr-maroon);
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 2px;
+  z-index: 5;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
 .back-to-top:hover {
   background: var(--clr-maroon);
   color: var(--clr-white);

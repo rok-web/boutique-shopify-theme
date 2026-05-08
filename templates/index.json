@@ -21,6 +21,13 @@
         "cta_secondary_url": "/pages/lookbook"
       }
     },
+    "brand-philosophy": {
+      "type": "brand-philosophy",
+      "settings": {
+        "heading": "Crafted to Define You",
+        "text": "At Frillve, we believe every piece of clothing should tell a story of whimsical luxury and timeless grace. Our couture collections for children and women are meticulously crafted to celebrate the magic in every moment."
+      }
+    },
     "featured-categories": {
       "type": "featured-categories",
       "blocks": {
@@ -135,6 +142,7 @@
   },
   "order": [
     "hero",
+    "brand-philosophy",
     "featured-categories",
     "featured-products",
     "testimonials"
