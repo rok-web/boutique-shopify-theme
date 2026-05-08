@@ -75,7 +75,7 @@
                   class="category-card__img">
               {% else %}
                 {% assign cat_index = forloop.index0 | modulo: 4 %}
-                {% assign cat_images = "category_sarees.png|category_suits.png|category_lehengas.png|category_kurtis.png" | split: "|" %}
+                {% assign cat_images = "category_kids_wear.png|category_sarees.png|category_suits.png|category_lehengas.png" | split: "|" %}
                 <img
                   src="{{ cat_images[cat_index] | asset_url }}"
                   alt="{{ block.settings.title }}"

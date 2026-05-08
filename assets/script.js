@@ -1,5 +1,5 @@
 /* ============================================================
-   VASTHRALAYA — script.js
+   FRILLVE — script.js
    Cart, Slider, Filters, Wishlist, Recently Viewed, Sticky ATC, etc.
    ============================================================ */
 
@@ -169,7 +169,7 @@ window.shareWishlist = function() {
 };
 
 window.acceptCookies = function() {
-  localStorage.setItem('vasthralaya_cookies_accepted', 'true');
+  localStorage.setItem('frillve_cookies_accepted', 'true');
   const banner = document.getElementById('CookieConsent');
   if (banner) banner.style.display = 'none';
 };
@@ -691,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Cookie Banner
-  if (!localStorage.getItem('vasthralaya_cookies_accepted')) {
+  if (!localStorage.getItem('frillve_cookies_accepted')) {
     const banner = document.getElementById('CookieConsent');
     if (banner) banner.style.display = 'flex';
   }

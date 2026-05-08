@@ -51,17 +51,17 @@
         "cat4": {
           "type": "category",
           "settings": {
-            "title": "Kurtis",
-            "subtitle": "Daily wear & more",
-            "url": "/collections/kurtis"
+            "title": "Kids Wear",
+            "subtitle": "New Collection",
+            "url": "/collections/kids-wear"
           }
         }
       },
       "block_order": [
+        "cat4",
         "cat1",
         "cat2",
-        "cat3",
-        "cat4"
+        "cat3"
       ],
       "settings": {
         "title": "Shop by Category"
