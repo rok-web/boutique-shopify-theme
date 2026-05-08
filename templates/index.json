@@ -138,6 +138,13 @@
       "settings": {
         "title": "What Our Customers Say"
       }
+    },
+    "video-testimonials": {
+      "type": "video-testimonials",
+      "settings": {
+        "title": "Real Frillve Moments",
+        "subtitle": "Watch our Little Princesses in action"
+      }
     }
   },
   "order": [
@@ -145,6 +152,7 @@
     "brand-philosophy",
     "featured-categories",
     "featured-products",
+    "video-testimonials",
     "testimonials"
   ]
 }

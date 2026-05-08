@@ -1,0 +1,78 @@
+<div class="mobile-bottom-nav">
+  <a href="/" class="mobile-nav-item {% if request.path == '/' %}active{% endif %}">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="/collections/all" class="mobile-nav-item {% if request.path contains '/collections' %}active{% endif %}">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>
+    <span>Shop</span>
+  </a>
+  <a href="/pages/wishlist" class="mobile-nav-item">
+    <div class="nav-icon-badge">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78v0z"/></svg>
+      <span class="badge">0</span>
+    </div>
+    <span>Wishlist</span>
+  </a>
+  <a href="/account" class="mobile-nav-item">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Log In</span>
+  </a>
+</div>
+
+<style>
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid var(--clr-border);
+  z-index: 1000;
+  padding: 0 10px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-nav { display: none; }
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--clr-ink-muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  width: 25%;
+}
+
+.mobile-nav-item.active {
+  color: var(--clr-emerald);
+}
+
+.nav-icon-badge {
+  position: relative;
+}
+
+.nav-icon-badge .badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background: var(--clr-emerald);
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 2px 4px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+</style>

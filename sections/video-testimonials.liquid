@@ -1,0 +1,242 @@
+{% schema %}
+{
+  "name": "Video Testimonials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Real stories from real people"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video_card",
+      "name": "Video Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Video Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer Name",
+          "default": "Happy Parent"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption Overlay",
+          "default": "Amazing Quality!"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Testimonials",
+      "blocks": [
+        {"type": "video_card"},
+        {"type": "video_card"},
+        {"type": "video_card"},
+        {"type": "video_card"}
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="video-testimonials" id="VideoTestimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">{{ section.settings.title }}</h2>
+      <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+    </div>
+
+    <div class="video-slider-container">
+      <div class="video-slider" id="VideoSlider">
+        {% for block in section.blocks %}
+          <div class="video-card" {{ block.shopify_attributes }}>
+            <div class="video-card__media">
+              {% if block.settings.thumbnail %}
+                <img src="{{ block.settings.thumbnail | image_url: width: 400 }}" alt="{{ block.settings.customer_name }}" loading="lazy">
+              {% else %}
+                {% assign thumb_index = forloop.index | modulo: 2 | plus: 1 %}
+                {% assign thumb_name = 'video_thumb_' | append: thumb_index | append: '.png' %}
+                <img src="{{ thumb_name | asset_url }}" alt="Review Thumbnail" loading="lazy">
+              {% endif %}
+              
+              <div class="video-card__overlay">
+                <div class="video-play-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                {% if block.settings.caption != blank %}
+                  <div class="video-card__caption">{{ block.settings.caption }}</div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="video-card__info">
+              <span class="video-card__name">{{ block.settings.customer_name }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <div class="slider-controls">
+        <button class="slider-arrow prev" onclick="scrollVideoSlider(-1)" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="slider-arrow next" onclick="scrollVideoSlider(1)" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function scrollVideoSlider(direction) {
+  const slider = document.getElementById('VideoSlider');
+  const scrollAmount = slider.offsetWidth * 0.8;
+  slider.scrollBy({
+    left: direction * scrollAmount,
+    behavior: 'smooth'
+  });
+}
+</script>
+
+<style>
+.video-testimonials {
+  padding: 80px 0;
+  background: var(--clr-white);
+}
+
+.video-slider-container {
+  position: relative;
+  margin-top: 40px;
+}
+
+.video-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 20px;
+}
+
+.video-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.video-card {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--clr-emerald);
+  padding: 4px; /* Green border effect like screenshot */
+}
+
+.video-card__media {
+  position: relative;
+  aspect-ratio: 9/16;
+  border-radius: calc(var(--radius-lg) - 4px);
+  overflow: hidden;
+}
+
+.video-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.video-card:hover .video-card__media img {
+  transform: scale(1.05);
+}
+
+.video-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-play-btn {
+  width: 60px;
+  height: 60px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 2px solid #fff;
+  transition: transform 0.3s ease;
+}
+
+.video-card:hover .video-play-btn {
+  transform: scale(1.1);
+}
+
+.video-card__caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.video-card__info {
+  padding: 12px;
+  text-align: center;
+  display: none; /* Keep it clean like screenshot */
+}
+
+.slider-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.slider-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--clr-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.slider-arrow:hover {
+  background: var(--clr-emerald);
+  color: #fff;
+  border-color: var(--clr-emerald);
+}
+
+@media (max-width: 768px) {
+  .video-card { flex: 0 0 220px; }
+  .video-testimonials { padding: 50px 0; }
+}
+</style>
